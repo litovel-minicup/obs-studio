@@ -19,6 +19,7 @@ private:
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseDoubleClickEvent(QMouseEvent *event) override;
+	int getSourceByPosition(int x, int y);
 
 	static constexpr size_t scenesCount = 16;
 	int savedMonitor = 0;
@@ -34,6 +35,7 @@ private:
 	gs_vertbuffer_t *topLine = nullptr;
 	gs_vertbuffer_t *rightLine = nullptr;
 	bool ready = false;
+	static const QMap<QString, int> layoutClassesMap;
 
 	void UpdateMultiview();
 

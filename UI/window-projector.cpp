@@ -7,6 +7,8 @@
 #include "display-helpers.hpp"
 #include "qt-wrappers.hpp"
 #include "platform.hpp"
+#include <QMap>
+#include <QDebug>
 
 #define HORIZONTAL_TOP    0
 #define HORIZONTAL_BOTTOM 1
@@ -17,6 +19,11 @@
 static QList<OBSProjector *> multiviewProjectors;
 static bool updatingMultiview = false;
 static int multiviewLayout = CUSTOM5x5;
+const QMap<QString, int> OBSProjector::layoutClassesMap = {
+	{ "S", 0 },
+	{ "Z", 1 },
+	{ "M", 2 }
+};
 
 OBSProjector::OBSProjector(QWidget *widget, obs_source_t *source_, bool window)
 	: OBSQTDisplay                 (widget,
@@ -293,11 +300,12 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	qiScaleX  = qiCX / targetCXF;
 	qiScaleY  = qiCY / targetCYF;
 
-	// size of one segment in 5x5
+	// map class int to string prefix
 	constexpr float previewSegmentsSize = 3.;
 	constexpr float gridSize = 5.;
-	float fifthCX = (targetCXF + 1) / gridSize;
-	float fifthCY = (targetCYF + 1) / gridSize;
+	// size of one segment in 5x5
+	float fifthCX = (targetCXF + 2.5) / gridSize;
+	float fifthCY = (targetCYF + 2.5) / gridSize;
 	// offsetted size
 	float fiCX = fifthCX - gridSize * 2.;
 	float fiCY = fifthCY - gridSize * 2.;
@@ -341,7 +349,7 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 		gs_projection_pop();
 	};
 
-	auto calcBaseSource = [&](size_t i)
+	auto calcBaseSource = [&](size_t i, quint8 layoutClass = 0)
 	{
 		switch (multiviewLayout) {
 		case VERTICAL_LEFT:
@@ -366,7 +374,15 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 			}
 			break;
 		case CUSTOM5x5:
-			// TODO make 
+			if (layoutClass == 0 || layoutClass == 1) {
+				sourceX = float(i) * fifthCX;
+				sourceY = fifthCY * (previewSegmentsSize + float(layoutClass));
+			}
+			else if (layoutClass == 2) {
+				sourceX = (i % (int)(gridSize - previewSegmentsSize) + previewSegmentsSize) * fifthCX;
+				sourceY = fifthCY * (i / (int)(gridSize - previewSegmentsSize));
+			}
+
 			break;
 
 		default: //HORIZONTAL_TOP:
@@ -379,7 +395,6 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 			}
 		}
 	};
-
 	auto calcPreviewProgram = [&](bool program)
 	{
 		switch (multiviewLayout) {
@@ -439,20 +454,44 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	gs_set_viewport(x, y, targetCX * scale, targetCY * scale);
 	gs_ortho(0.0f, targetCXF, 0.0f, targetCYF, -100.0f, 100.0f);
 
+	QMap<QString, int> layoutClassesItemsCount;
+	for (const QString& key : layoutClassesMap.keys())
+		layoutClassesItemsCount.insert(key, 0);
+
 	for (size_t i = 0; i < OBSProjector::scenesCount; i++) {
-		break;
 		OBSSource src = OBSGetStrongRef(window->multiviewScenes[i]);
 		obs_source *label = window->multiviewLabels[i + 2];
+		QString name(obs_source_get_name(src));
 
 		if (!src)
 			continue;
 		if (!label)
 			continue;
 
-		calcBaseSource(i);
+		if (multiviewLayout == CUSTOM5x5) {
+			// set layout class accordint to name prefix
+			for (const QString& key : layoutClassesMap.keys()) {
+				if (name.startsWith(key)) {
+					const int layoutClass = layoutClassesMap.value(key, 0);
+					calcBaseSource(layoutClassesItemsCount[key], layoutClass);
+					layoutClassesItemsCount[key]++;
+					break;
+				}
+			}
+		}
 
-		qiX = sourceX + 4.0f;
-		qiY = sourceY + 4.0f;
+		else
+			calcBaseSource(i);
+
+		if (multiviewLayout != CUSTOM5x5) {
+			qiX = sourceX + 4.0f;
+			qiY = sourceY + 4.0f;
+		}
+
+		else {
+			qiX = sourceX + 4.0f;
+			qiY = sourceY + 4.0f;
+		}
 
 		/* ----------- */
 
@@ -463,12 +502,23 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 
 			gs_matrix_push();
 			gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-			drawBox(quarterCX, quarterCY, colorVal);
+			if(multiviewLayout != CUSTOM5x5)
+				drawBox(quarterCX, quarterCY, colorVal);
+			else
+				drawBox(fifthCX, fifthCY, colorVal);
 			gs_matrix_pop();
 
 			gs_matrix_push();
-			gs_matrix_translate3f(qiX, qiY, 0.0f);
-			drawBox(qiCX, qiCY, 0xFF000000);
+			if (multiviewLayout != CUSTOM5x5) {
+				gs_matrix_translate3f(qiX, qiY, 0.0f);
+				drawBox(qiCX, qiCY, 0xFF000000);
+			}
+
+			else {
+
+				gs_matrix_translate3f(qiX, qiY, 0.0f);
+				drawBox(fiCX, fiCY, 0xFF000000);
+			}
 			gs_matrix_pop();
 		}
 
@@ -476,9 +526,15 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 
 		gs_matrix_push();
 		gs_matrix_translate3f(qiX, qiY, 0.0f);
-		gs_matrix_scale3f(qiScaleX, qiScaleY, 1.0f);
+		if (multiviewLayout != CUSTOM5x5) {
+			gs_matrix_scale3f(qiScaleX, qiScaleY, 1.0f);
+			setRegion(qiX, qiY, qiCX, qiCY);
+		}
+		else {
+			gs_matrix_scale3f(fiScaleX, fiScaleY, 1.0f);
+			setRegion(qiX, qiY, fiCX, fiCY);
+		}
 
-		setRegion(qiX, qiY, qiCX, qiCY);
 		obs_source_video_render(src);
 		resetRegion();
 
@@ -489,15 +545,23 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 
 		/* ----------- */
 
-		offset = labelOffset(label, quarterCX);
+		if (multiviewLayout != CUSTOM5x5)
+			offset = labelOffset(label, quarterCX);
+		else
+			offset = labelOffset(label, fifthCX);
 		cx = obs_source_get_width(label);
 		cy = obs_source_get_height(label);
 
 		gs_matrix_push();
-		gs_matrix_translate3f(sourceX + offset,
-				(quarterCY * 0.8f) + sourceY, 0.0f);
+		if (multiviewLayout != CUSTOM5x5) {
+			gs_matrix_translate3f(sourceX + offset, (quarterCY * 0.8f) + sourceY, 0.0f);
+			drawBox(cx, cy + int(quarterCX * 0.015f), 0xD91F1F1F);
+		}
+		else {
+			gs_matrix_translate3f(sourceX + offset, (fifthCY * 0.8f) + sourceY, 0.0f);
+			drawBox(cx, cy + int(fifthCX * 0.015f), 0xD91F1F1F);
+		}
 
-		drawBox(cx, cy + int(quarterCX * 0.015f), 0xD91F1F1F);
 		obs_source_video_render(label);
 
 		gs_matrix_pop();
@@ -682,7 +746,7 @@ void OBSProjector::OBSSourceRemoved(void *data, calldata_t *params)
 	UNUSED_PARAMETER(params);
 }
 
-static int getSourceByPosition(int x, int y)
+int OBSProjector::getSourceByPosition(int x, int y)
 {
 	struct obs_video_info ovi;
 	obs_get_video_info(&ovi);
@@ -698,6 +762,11 @@ static int getSourceByPosition(int x, int y)
 	int     halfX = cx / 2;
 	int     halfY = cy / 2;
 	int     pos   = -1;
+	int	fifthX = cx / 5;
+	int	fifthY = cy / 5;
+	int layoutClass = 0;
+	QString classPrefix;
+	int itemsInClassCount = 0;
 
 	switch (multiviewLayout) {
 	case VERTICAL_LEFT:
@@ -739,6 +808,67 @@ static int getSourceByPosition(int x, int y)
 			pos++;
 		break;
 	case CUSTOM5x5:
+		if (float(cx) / float(cy) > ratio) {
+			int validX = cy * ratio;
+			minX = halfX - (validX  / 2);
+			maxX = halfX + (validX / 2);
+		}
+		else {
+			int validY = cx / ratio;
+			maxY = halfY + (validY / 2);
+		}
+
+		minY = 3 * fifthY;
+
+		if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+			pos = (x - minX) / ((maxX - minX) / 5);
+			if (y > minY + ((maxY - minY) / 2))
+				layoutClass = 1;
+		}
+
+		// right bar
+		if (y < minY) {
+			minX = 0;
+			minY = 0;
+			maxX = cx;
+			maxY = cy;
+			if (float(cx) / float(cy) > ratio) {
+				int validX = cy * ratio;
+				maxX = halfX + (validX / 2);
+			}
+			else {
+				int validY = cx / ratio;
+				minY = halfY - (validY / 2);
+				maxY = halfY + (validY / 2);
+			}
+			minX = 3 * fifthX;
+			if (x < minX || x > maxX || y < minY || y > maxY)
+				break;
+
+			pos = 2 * ((y - minY) / ((maxY - minY) / 5));
+			if (x > minX + ((maxX - minX) / 2))
+				pos++;
+			layoutClass = 2;
+		}
+
+		if (pos == -1)
+			break;
+		// remap to layout classes
+		classPrefix = OBSProjector::layoutClassesMap.key(layoutClass);
+		itemsInClassCount = 0;
+
+		for (size_t i = 0; i < OBSProjector::scenesCount; i++) {
+			OBSSource src = OBSGetStrongRef(multiviewScenes[i]);
+			const QString name(obs_source_get_name(src));
+			if (name.startsWith(classPrefix)) {
+				itemsInClassCount++;
+				if (itemsInClassCount == pos + 1) {
+					pos = i;
+					break;
+				}
+			}
+		}
+
 		break;
 	case HORIZONTAL_BOTTOM:
 		if (float(cx) / float(cy) > ratio) {
