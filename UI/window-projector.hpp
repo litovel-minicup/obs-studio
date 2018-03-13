@@ -20,11 +20,12 @@ private:
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseDoubleClickEvent(QMouseEvent *event) override;
 
+	static constexpr size_t scenesCount = 16;
 	int savedMonitor = 0;
 	bool isWindow = false;
 	ProjectorType type = ProjectorType::Source;
-	OBSWeakSource multiviewScenes[8];
-	OBSSource     multiviewLabels[10];
+	OBSWeakSource multiviewScenes[scenesCount];
+	OBSSource     multiviewLabels[2 + scenesCount];
 	gs_vertbuffer_t *outerBox = nullptr;
 	gs_vertbuffer_t *innerBox = nullptr;
 	gs_vertbuffer_t *leftVLine = nullptr;

@@ -1101,6 +1101,9 @@ void OBSBasicSettings::LoadGeneralSettings()
 	ui->multiviewLayout->addItem(QTStr(
 			"Basic.Settings.General.MultiviewLayout.Vertical.Right"),
 			QT_UTF8("verticalright"));
+	ui->multiviewLayout->addItem(QTStr(
+		"Basic.Settings.General.MultiviewLayout.Custom.5x5"),
+		QT_UTF8("custom5x5"));
 
 	const char *multiviewLayoutText = config_get_string(GetGlobalConfig(),
 			"BasicWindow", "MultiviewLayout");
@@ -1111,6 +1114,8 @@ void OBSBasicSettings::LoadGeneralSettings()
 		ui->multiviewLayout->setCurrentIndex(2);
 	else if (astrcmpi(multiviewLayoutText, "verticalright") == 0)
 		ui->multiviewLayout->setCurrentIndex(3);
+	else if (astrcmpi(multiviewLayoutText, "custom5x5") == 0)
+		ui->multiviewLayout->setCurrentIndex(4);
 	else
 		ui->multiviewLayout->setCurrentIndex(0);
 

@@ -12,10 +12,11 @@
 #define HORIZONTAL_BOTTOM 1
 #define VERTICAL_LEFT     2
 #define VERTICAL_RIGHT    3
+#define CUSTOM5x5	  4
 
 static QList<OBSProjector *> multiviewProjectors;
 static bool updatingMultiview = false;
-static int multiviewLayout = HORIZONTAL_TOP;
+static int multiviewLayout = CUSTOM5x5;
 
 OBSProjector::OBSProjector(QWidget *widget, obs_source_t *source_, bool window)
 	: OBSQTDisplay                 (widget,
@@ -273,8 +274,8 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 
 	GetScaleAndCenterPos(targetCX, targetCY, cx, cy, x, y, scale);
 
-	targetCXF = float(targetCX);
-	targetCYF = float(targetCY);
+	targetCXF = float(targetCX);	// screen width
+	targetCYF = float(targetCY);	// screen height
 	fX        = float(x);
 	fY        = float(y);
 
@@ -291,6 +292,17 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	qiCY      = (quarterCY - 8.0);
 	qiScaleX  = qiCX / targetCXF;
 	qiScaleY  = qiCY / targetCYF;
+
+	// size of one segment in 5x5
+	constexpr float previewSegmentsSize = 3.;
+	constexpr float gridSize = 5.;
+	float fifthCX = (targetCXF + 1) / gridSize;
+	float fifthCY = (targetCYF + 1) / gridSize;
+	// offsetted size
+	float fiCX = fifthCX - gridSize * 2.;
+	float fiCY = fifthCY - gridSize * 2.;
+	float fiScaleX = fiCX / targetCXF;
+	float fiScaleY = fiCY / targetCYF;
 
 	OBSSource previewSrc = main->GetCurrentSceneSource();
 	OBSSource programSrc = main->GetProgramSource();
@@ -353,6 +365,10 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 				sourceY = quarterCY;
 			}
 			break;
+		case CUSTOM5x5:
+			// TODO make 
+			break;
+
 		default: //HORIZONTAL_TOP:
 			if (i < 4) {
 				sourceX = (float(i) * quarterCX);
@@ -397,6 +413,12 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 				labelX = halfCX + offset;
 			}
 			break;
+		case CUSTOM5x5:
+			sourceX = 2.0f;	// offset
+			sourceY = 2.0f;
+			labelX = offset;
+			labelY = previewSegmentsSize * fiCY * 0.8f;
+			break;
 		default: //HORIZONTAL_TOP:
 			sourceX = 2.0f;
 			sourceY = 2.0f;
@@ -417,7 +439,8 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	gs_set_viewport(x, y, targetCX * scale, targetCY * scale);
 	gs_ortho(0.0f, targetCXF, 0.0f, targetCYF, -100.0f, 100.0f);
 
-	for (size_t i = 0; i < 8; i++) {
+	for (size_t i = 0; i < OBSProjector::scenesCount; i++) {
+		break;
 		OBSSource src = OBSGetStrongRef(window->multiviewScenes[i]);
 		obs_source *label = window->multiviewLabels[i + 2];
 
@@ -491,9 +514,16 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 
 	gs_matrix_push();
 	gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-	gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+	if (multiviewLayout != CUSTOM5x5) {
+		gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+		setRegion(sourceX, sourceY, hiCX, hiCY);
+	}
 
-	setRegion(sourceX, sourceY, hiCX, hiCY);
+	else {
+		gs_matrix_scale3f(fiScaleX * previewSegmentsSize,
+			fiScaleY * previewSegmentsSize, 1.0f);
+		setRegion(sourceX, sourceY, fiCX * previewSegmentsSize, fiCY * previewSegmentsSize);
+	}
 
 	if (studioMode) {
 		obs_source_video_render(previewSrc);
@@ -509,7 +539,10 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 
 	gs_matrix_push();
 	gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-	gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+	if (multiviewLayout != CUSTOM5x5)
+		gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+	else
+		gs_matrix_scale3f(fiScaleX * previewSegmentsSize, fiScaleY * previewSegmentsSize, 1.0f);
 
 	renderVB(solid, window->outerBox, targetCX, targetCY);
 	renderVB(solid, window->innerBox, targetCX, targetCY);
@@ -537,42 +570,44 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	/* ----------------------------- */
 	/* draw program                  */
 
-	obs_source_t *programLabel = window->multiviewLabels[1];
-	offset = labelOffset(programLabel, halfCX);
-	calcPreviewProgram(true);
+	if (multiviewLayout != CUSTOM5x5) {
+		obs_source_t *programLabel = window->multiviewLabels[1];
+		offset = labelOffset(programLabel, halfCX);
+		calcPreviewProgram(true);
 
-	gs_matrix_push();
-	gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-	gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+		gs_matrix_push();
+		gs_matrix_translate3f(sourceX, sourceY, 0.0f);
+		gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
 
-	setRegion(sourceX, sourceY, hiCX, hiCY);
-	obs_render_main_texture();
-	resetRegion();
+		setRegion(sourceX, sourceY, hiCX, hiCY);
+		obs_render_main_texture();
+		resetRegion();
 
-	gs_matrix_pop();
+		gs_matrix_pop();
 
-	/* ----------- */
+		/* ----------- */
 
-	gs_matrix_push();
-	gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-	gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+		gs_matrix_push();
+		gs_matrix_translate3f(sourceX, sourceY, 0.0f);
+		gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
 
-	renderVB(solid, window->outerBox, targetCX, targetCY);
+		renderVB(solid, window->outerBox, targetCX, targetCY);
 
-	gs_matrix_pop();
+		gs_matrix_pop();
 
-	/* ----------- */
+		/* ----------- */
 
-	cx = obs_source_get_width(programLabel);
-	cy = obs_source_get_height(programLabel);
+		cx = obs_source_get_width(programLabel);
+		cy = obs_source_get_height(programLabel);
 
-	gs_matrix_push();
-	gs_matrix_translate3f(labelX, labelY, 0.0f);
+		gs_matrix_push();
+		gs_matrix_translate3f(labelX, labelY, 0.0f);
 
-	drawBox(cx, cy + int(halfCX * 0.015f), 0xD91F1F1F);
-	obs_source_video_render(programLabel);
+		drawBox(cx, cy + int(halfCX * 0.015f), 0xD91F1F1F);
+		obs_source_video_render(programLabel);
 
-	gs_matrix_pop();
+		gs_matrix_pop();
+	}
 
 	/* ----------------------------- */
 
@@ -703,6 +738,8 @@ static int getSourceByPosition(int x, int y)
 		if (x > minX + ((maxX - minX) / 2))
 			pos++;
 		break;
+	case CUSTOM5x5:
+		break;
 	case HORIZONTAL_BOTTOM:
 		if (float(cx) / float(cy) > ratio) {
 			int validX = cy * ratio;
@@ -824,7 +861,7 @@ void OBSProjector::UpdateMultiview()
 	multiviewLabels[0] = CreateLabel(Str("StudioMode.Preview"), h / 2);
 	multiviewLabels[1] = CreateLabel(Str("StudioMode.Program"), h / 2);
 
-	for (size_t i = 0; i < scenes.sources.num && curIdx < 8; i++) {
+	for (size_t i = 0; i < scenes.sources.num && curIdx < OBSProjector::scenesCount; i++) {
 		obs_source_t *src = scenes.sources.array[i];
 		OBSData data = obs_source_get_private_settings(src);
 		obs_data_release(data);
@@ -857,6 +894,8 @@ void OBSProjector::UpdateMultiview()
 		multiviewLayout = VERTICAL_LEFT;
 	else if (astrcmpi(multiviewLayoutText, "verticalright") == 0)
 		multiviewLayout = VERTICAL_RIGHT;
+	else if (astrcmpi(multiviewLayoutText, "custom5x5") == 0)
+		multiviewLayout = CUSTOM5x5;
 	else
 		multiviewLayout = HORIZONTAL_TOP;
 }
