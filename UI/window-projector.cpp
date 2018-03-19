@@ -572,9 +572,74 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	/* ----------------------------- */
 	/* draw preview                  */
 
-	obs_source_t *previewLabel = window->multiviewLabels[0];
-	offset = labelOffset(previewLabel, halfCX);
-	calcPreviewProgram(false);
+	if (multiviewLayout != CUSTOM5x5) {
+		obs_source_t *previewLabel = window->multiviewLabels[0];
+		offset = labelOffset(previewLabel, halfCX);
+		calcPreviewProgram(false);
+
+		gs_matrix_push();
+		gs_matrix_translate3f(sourceX, sourceY, 0.0f);
+		if (multiviewLayout != CUSTOM5x5) {
+			gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+			setRegion(sourceX, sourceY, hiCX, hiCY);
+		}
+
+		else {
+			gs_matrix_scale3f(fiScaleX * previewSegmentsSize,
+				fiScaleY * previewSegmentsSize, 1.0f);
+			setRegion(sourceX, sourceY, fiCX * previewSegmentsSize, fiCY * previewSegmentsSize);
+		}
+
+		if (studioMode) {
+			obs_source_video_render(previewSrc);
+		}
+		else {
+			obs_render_main_texture();
+		}
+
+		resetRegion();
+
+		gs_matrix_pop();
+
+		/* ----------- */
+
+		gs_matrix_push();
+		gs_matrix_translate3f(sourceX, sourceY, 0.0f);
+		if (multiviewLayout != CUSTOM5x5)
+			gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
+		else
+			gs_matrix_scale3f(fiScaleX * previewSegmentsSize, fiScaleY * previewSegmentsSize, 1.0f);
+
+		renderVB(solid, window->outerBox, targetCX, targetCY);
+		renderVB(solid, window->innerBox, targetCX, targetCY);
+		renderVB(solid, window->leftVLine, targetCX, targetCY);
+		renderVB(solid, window->rightVLine, targetCX, targetCY);
+		renderVB(solid, window->leftLine, targetCX, targetCY);
+		renderVB(solid, window->topLine, targetCX, targetCY);
+		renderVB(solid, window->rightLine, targetCX, targetCY);
+
+		gs_matrix_pop();
+
+		/* ----------- */
+
+		cx = obs_source_get_width(previewLabel);
+		cy = obs_source_get_height(previewLabel);
+
+		gs_matrix_push();
+		gs_matrix_translate3f(labelX, labelY, 0.0f);
+
+		drawBox(cx, cy + int(halfCX * 0.015f), 0xD91F1F1F);
+		obs_source_video_render(previewLabel);
+
+		gs_matrix_pop();
+	}
+
+	/* ----------------------------- */
+	/* draw program                  */
+
+	obs_source_t *programLabel = window->multiviewLabels[1];
+	offset = labelOffset(programLabel, halfCX);
+	calcPreviewProgram(true);
 
 	gs_matrix_push();
 	gs_matrix_translate3f(sourceX, sourceY, 0.0f);
@@ -584,17 +649,11 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 	}
 
 	else {
-		gs_matrix_scale3f(fiScaleX * previewSegmentsSize,
-			fiScaleY * previewSegmentsSize, 1.0f);
+		gs_matrix_scale3f(fiScaleX * previewSegmentsSize, fiScaleY * previewSegmentsSize, 1.0f);
 		setRegion(sourceX, sourceY, fiCX * previewSegmentsSize, fiCY * previewSegmentsSize);
 	}
 
-	if (studioMode) {
-		obs_source_video_render(previewSrc);
-	} else {
-		obs_render_main_texture();
-	}
-
+	obs_render_main_texture();
 	resetRegion();
 
 	gs_matrix_pop();
@@ -609,69 +668,21 @@ void OBSProjector::OBSRenderMultiview(void *data, uint32_t cx, uint32_t cy)
 		gs_matrix_scale3f(fiScaleX * previewSegmentsSize, fiScaleY * previewSegmentsSize, 1.0f);
 
 	renderVB(solid, window->outerBox, targetCX, targetCY);
-	renderVB(solid, window->innerBox, targetCX, targetCY);
-	renderVB(solid, window->leftVLine, targetCX, targetCY);
-	renderVB(solid, window->rightVLine, targetCX, targetCY);
-	renderVB(solid, window->leftLine, targetCX, targetCY);
-	renderVB(solid, window->topLine, targetCX, targetCY);
-	renderVB(solid, window->rightLine, targetCX, targetCY);
 
 	gs_matrix_pop();
 
 	/* ----------- */
 
-	cx = obs_source_get_width(previewLabel);
-	cy = obs_source_get_height(previewLabel);
+	cx = obs_source_get_width(programLabel);
+	cy = obs_source_get_height(programLabel);
 
 	gs_matrix_push();
 	gs_matrix_translate3f(labelX, labelY, 0.0f);
 
 	drawBox(cx, cy + int(halfCX * 0.015f), 0xD91F1F1F);
-	obs_source_video_render(previewLabel);
+	obs_source_video_render(programLabel);
 
 	gs_matrix_pop();
-
-	/* ----------------------------- */
-	/* draw program                  */
-
-	if (multiviewLayout != CUSTOM5x5) {
-		obs_source_t *programLabel = window->multiviewLabels[1];
-		offset = labelOffset(programLabel, halfCX);
-		calcPreviewProgram(true);
-
-		gs_matrix_push();
-		gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-		gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
-
-		setRegion(sourceX, sourceY, hiCX, hiCY);
-		obs_render_main_texture();
-		resetRegion();
-
-		gs_matrix_pop();
-
-		/* ----------- */
-
-		gs_matrix_push();
-		gs_matrix_translate3f(sourceX, sourceY, 0.0f);
-		gs_matrix_scale3f(hiScaleX, hiScaleY, 1.0f);
-
-		renderVB(solid, window->outerBox, targetCX, targetCY);
-
-		gs_matrix_pop();
-
-		/* ----------- */
-
-		cx = obs_source_get_width(programLabel);
-		cy = obs_source_get_height(programLabel);
-
-		gs_matrix_push();
-		gs_matrix_translate3f(labelX, labelY, 0.0f);
-
-		drawBox(cx, cy + int(halfCX * 0.015f), 0xD91F1F1F);
-		obs_source_video_render(programLabel);
-
-		gs_matrix_pop();
-	}
 
 	/* ----------------------------- */
 
