@@ -20,9 +20,9 @@ static QList<OBSProjector *> multiviewProjectors;
 static bool updatingMultiview = false;
 static int multiviewLayout = CUSTOM5x5;
 const QMap<QString, int> OBSProjector::layoutClassesMap = {
-	{ "S", 0 },
+	{ "C", 0 },
 	{ "Z", 1 },
-	{ "M", 2 }
+	{ "E", 2 }
 };
 
 OBSProjector::OBSProjector(QWidget *widget, obs_source_t *source_, bool window)
