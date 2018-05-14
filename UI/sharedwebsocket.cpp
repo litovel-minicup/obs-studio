@@ -1,13 +1,16 @@
 #include "sharedwebsocket.h"
+#include <chrono>
 
 SharedWebsocket::SharedWebsocket(QObject * parent): QObject(parent)
 {
     using sslErrorSignal = void(QWebSocket::*)(const QList<QSslError>&);
 
+    connect(&m_reconnectTimer, &QTimer::timeout, this, &SharedWebsocket::reconnect);
 	connect(&m_socket, &QWebSocket::connected, this, &SharedWebsocket::onConnected);
-	connect(&m_socket, &QWebSocket::disconnected, this, &SharedWebsocket::onDisconnected);
-	connect(&m_socket, static_cast<sslErrorSignal>(&QWebSocket::sslErrors), this, &SharedWebsocket::onSslError);
-	connect(this, &SharedWebsocket::urlChanged, this, &SharedWebsocket::handleUrlChange);
+	connect(&m_socket, &QWebSocket::disconnected,
+            this, &SharedWebsocket::onDisconnected);
+	connect(&m_socket, static_cast<sslErrorSignal>(&QWebSocket::sslErrors),
+            this, &SharedWebsocket::onSslError);
 }
 
 void SharedWebsocket::sendMsg(const QString & msg) {
@@ -18,10 +21,12 @@ void SharedWebsocket::sendMsg(const QString & msg) {
 }
 
 void SharedWebsocket::onConnected() {
+    qInfo() << "Connected to" << m_url;
     m_reconnectTimer.stop();
     this->setStatus(SharedWebsocket::Open);
 
-    connect(&m_socket, &QWebSocket::textMessageReceived, this, &SharedWebsocket::msgReceived);
+    connect(&m_socket, &QWebSocket::textMessageReceived, this,
+            &SharedWebsocket::msgReceived);
 }
 
 void SharedWebsocket::onSslError(const QList<QSslError> &errors) {
@@ -57,17 +62,15 @@ void SharedWebsocket::setUrl(const QUrl &url) {
     emit this->urlChanged(url);
 }
 
-void SharedWebsocket::handleUrlChange() {
-    m_socket.close();
-    m_reconnectTimer.start();
-    emit this->oldSocketClosed();
-}
-
 void SharedWebsocket::open(std::chrono::milliseconds reconnectTime) {
-    if(reconnectTime == 0ms) {
+    if(reconnectTime == std::chrono::milliseconds(0)) {
         m_socket.open(m_url);
         return;
     }
+
+    m_reconnectTimer.stop();
+    if(m_socket.state() == QAbstractSocket::ConnectedState)
+        m_socket.close();
 
     m_socket.open(m_url);
     m_reconnectTimer.setInterval(reconnectTime);
@@ -75,10 +78,31 @@ void SharedWebsocket::open(std::chrono::milliseconds reconnectTime) {
 }
 
 void SharedWebsocket::onDisconnected() {
+    qInfo() << "Disconnected";
     m_reconnectTimer.start();
     this->setStatus(SharedWebsocket::Closed);
 }
 
 void SharedWebsocket::stopReconnecting() {
     m_reconnectTimer.stop();
+}
+
+void SharedWebsocket::setReconnectInterval(std::chrono::milliseconds time) {
+    m_reconnectTimer.setInterval(time);
+}
+
+void SharedWebsocket::open() {
+    this->open(m_reconnectTimer.intervalAsDuration());
+}
+void SharedWebsocket::open(const QUrl &url) {
+    this->setUrl(url);
+    this->open(m_reconnectTimer.intervalAsDuration());
+}
+
+void SharedWebsocket::reconnect() {
+    qInfo() << "Reconnecting...";
+    if(m_socket.state() != QAbstractSocket::ConnectedState)
+        m_socket.open(m_url);
+    else
+        m_reconnectTimer.stop();
 }

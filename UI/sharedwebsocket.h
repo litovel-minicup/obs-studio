@@ -3,12 +3,13 @@
 #include <QObject>
 #include <QWebSocket>
 #include <QTimer>
+#include <chrono>
 
-class SharedWebsocket: QObject
+class SharedWebsocket: public QObject
 {
         Q_OBJECT
 		Q_ENUMS(Statuses)
-		Q_PROPERTY(int status READ status NOTIFY statusChannged)
+		Q_PROPERTY(int status READ status NOTIFY statusChanged)
 		Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
 	public:
@@ -27,7 +28,7 @@ class SharedWebsocket: QObject
 		QUrl url() const;
 
     private slots:
-		void handleUrlChange();
+        void reconnect();
 		void setStatus(Statuses status);
         void onConnected();
         void onDisconnected();
@@ -35,7 +36,10 @@ class SharedWebsocket: QObject
 
 	public slots:
 		void stopReconnecting();
-	    void open(std::chrono::milliseconds reconnectTime = 0ms);
+	    void setReconnectInterval(std::chrono::milliseconds time);
+	    void open(std::chrono::milliseconds reconnectTime);
+	    void open();
+	    void open(const QUrl& url);
 	    void sendMsg(const QString& msg);
 	    void setUrl(const QUrl& url);
 
