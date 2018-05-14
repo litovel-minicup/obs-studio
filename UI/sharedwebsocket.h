@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QObject>
-#include <QWebSocket>
 #include <QTimer>
 #include <chrono>
+#include <QtWebSockets/QWebSocket>
 
 class SharedWebsocket: public QObject
 {
