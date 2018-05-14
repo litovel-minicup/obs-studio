@@ -35,6 +35,7 @@ else()
 endif()
 
 find_package(Qt5Widgets ${FIND_MODE})
+find_package(Qt5WebSockets ${FIND_MODE})
 find_package(FFmpeg REQUIRED COMPONENTS avcodec avutil avformat)
 
 if(APPLE)
@@ -42,6 +43,15 @@ if(APPLE)
 endif(APPLE)
 
 if(NOT Qt5Widgets_FOUND)
+	if (ENABLE_UI)
+		message(FATAL_ERROR "Failed to find Qt5")
+	else()
+		message(STATUS "Qt5 not found - UI disabled")
+		return()
+	endif()
+endif()
+
+if(NOT Qt5WebSockets_FOUND)
 	if (ENABLE_UI)
 		message(FATAL_ERROR "Failed to find Qt5")
 	else()
@@ -134,6 +144,7 @@ set(obs_SOURCES
 	obs-app.cpp
 	api-interface.cpp
 	debug-console.cpp
+	sharedwebsocket.cpp
 	window-basic-main.cpp
 	window-basic-stats.cpp
 	window-basic-filters.cpp
@@ -185,6 +196,7 @@ set(obs_HEADERS
 	obs-app.hpp
 	platform.hpp
 	debug-console.hpp
+	sharedwebsocket.h
 	window-main.hpp
 	window-basic-main.hpp
 	window-basic-stats.hpp
@@ -273,6 +285,7 @@ endif()
 target_link_libraries(obs
 	libobs
 	Qt5::Widgets
+	Qt5::WebSockets
 	obs-frontend-api
 	${FFMPEG_LIBRARIES}
 	${LIBCURL_LIBRARIES}
