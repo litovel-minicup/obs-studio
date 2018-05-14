@@ -38,7 +38,20 @@ void DebugConsole::addMessage(QtMsgType type, const QMessageLogContext &context,
 	QString text;
 	switch (type) {
 	case QtDebugMsg:
-		text = QString("<font color='green'>DEBUG: </font>%1 (%2:%3, %4)<br />").arg(msg).arg(context.file).arg(context.line).arg(context.function);
+		if(QString(context.file).contains(".qml")) {
+			text = QString("<font color='magenta'>QML: </font>%1 (%2:%3)<br />")
+					.arg(msg)
+					.arg(context.line)
+					.arg(context.function);
+		}
+
+		else {
+			text = QString("<font color='green'>DEBUG: </font>%1 (%2:%3, %4)<br />")
+					.arg(msg)
+					.arg(context.file)
+					.arg(context.line)
+					.arg(context.function);
+		}
 		break;
 	case QtInfoMsg:
 		text = QString("<font color='blue'>INFO: </font>%1 (%2:%3, %4)<br />").arg(msg).arg(context.file).arg(context.line).arg(context.function);
