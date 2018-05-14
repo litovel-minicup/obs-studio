@@ -18,7 +18,6 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent)
 
 	m_scrollArea->setWidget(m_text);
 
-    //m_scrollArea->setAlignment(Qt::AlignTop);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->addWidget(m_scrollArea);
@@ -29,6 +28,8 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent)
 
 DebugConsole* DebugConsole::instance()
 {
+	if(DebugConsole::m_instance == nullptr)
+		DebugConsole::m_instance = new DebugConsole;
 	return DebugConsole::m_instance;
 }
 
@@ -54,11 +55,4 @@ void DebugConsole::addMessage(QtMsgType type, const QMessageLogContext &context,
 	}
 
 	m_text->setText(m_text->text() + text);
-}
-void DebugConsole::setInstance(DebugConsole* instance) {
-    connect(instance, &QObject::destroyed, []() {
-       DebugConsole::m_instance = nullptr;
-    });
-
-    DebugConsole::m_instance = instance;
 }

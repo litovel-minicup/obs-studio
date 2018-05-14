@@ -1,6 +1,8 @@
 #include "sharedwebsocket.h"
 #include <chrono>
 
+SharedWebsocket* SharedWebsocket::m_instance = nullptr;
+
 SharedWebsocket::SharedWebsocket(QObject * parent): QObject(parent)
 {
     using sslErrorSignal = void(QWebSocket::*)(const QList<QSslError>&);
@@ -105,4 +107,10 @@ void SharedWebsocket::reconnect() {
         m_socket.open(m_url);
     else
         m_reconnectTimer.stop();
+}
+
+SharedWebsocket* SharedWebsocket::instance() {
+    if(SharedWebsocket::m_instance == nullptr)
+        SharedWebsocket::m_instance = new SharedWebsocket;
+    return SharedWebsocket::m_instance;
 }

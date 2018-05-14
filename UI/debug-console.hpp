@@ -15,7 +15,6 @@ class DebugConsole: public QWidget
 	public:
 		DebugConsole(QWidget* parent = nullptr);
 
-		static void setInstance(DebugConsole* instance);
 		static DebugConsole* instance();
 		void addMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 

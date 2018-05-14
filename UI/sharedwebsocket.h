@@ -16,6 +16,7 @@ class SharedWebsocket: public QObject
 		enum Statuses {Open, Closed};
 
     private:
+        static SharedWebsocket* m_instance;
 		Statuses m_status;
         QWebSocket m_socket;
         QTimer m_reconnectTimer;
@@ -26,6 +27,7 @@ class SharedWebsocket: public QObject
 
 		int status() const;
 		QUrl url() const;
+		static SharedWebsocket* instance();
 
     private slots:
         void reconnect();

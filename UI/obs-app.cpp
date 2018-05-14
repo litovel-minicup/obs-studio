@@ -1357,21 +1357,20 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 
 	OBSApp program(argc, argv, profilerNameStore.get());
 	qInstallMessageHandler(consoleMessageOutput);
-	DebugConsole console;
-	DebugConsole::setInstance(&console);
-	console.setGeometry(QRect(50, 400, 800, 500));
-	console.show();
+	DebugConsole* console = DebugConsole::instance();
+	console->setGeometry(QRect(50, 400, 800, 500));
+	console->show();
 
 	ControlPanel controlPanel;
 	controlPanel.setGeometry(QRect(50, 0, 400, 200));
 	controlPanel.show();
 
-	SharedWebsocket websocket;
-	websocket.setReconnectInterval(std::chrono::milliseconds(1000));
+	SharedWebsocket* websocket = SharedWebsocket::instance();
+	websocket->setReconnectInterval(std::chrono::milliseconds(1000));
 
 	QObject::connect(&controlPanel,
 			&ControlPanel::connectRequest,
-			&websocket,
+			websocket,
 			static_cast<void(SharedWebsocket::*)(const QUrl&)>
                      (&SharedWebsocket::open)
 	);
