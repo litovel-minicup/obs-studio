@@ -133,6 +133,7 @@ set(obs_SOURCES
 	${obs_libffutil_SOURCES}
 	obs-app.cpp
 	api-interface.cpp
+	debug-console.cpp
 	window-basic-main.cpp
 	window-basic-stats.cpp
 	window-basic-filters.cpp
@@ -175,13 +176,15 @@ set(obs_SOURCES
 	source-label.cpp
 	remote-text.cpp
 	audio-encoders.cpp
-	qt-wrappers.cpp)
+	qt-wrappers.cpp
+	debug-console.cpp)
 
 set(obs_HEADERS
 	${obs_PLATFORM_HEADERS}
 	${obs_libffutil_HEADERS}
 	obs-app.hpp
 	platform.hpp
+	debug-console.hpp
 	window-main.hpp
 	window-basic-main.hpp
 	window-basic-stats.hpp
@@ -223,7 +226,8 @@ set(obs_HEADERS
 	source-label.hpp
 	remote-text.hpp
 	audio-encoders.hpp
-	qt-wrappers.hpp)
+	qt-wrappers.hpp
+	debug-console.hpp)
 
 set(obs_UI
 	forms/NameDialog.ui

@@ -53,6 +53,7 @@
 #endif
 
 #include <iostream>
+#include "debug-console.hpp"
 
 using namespace std;
 
@@ -1329,6 +1330,11 @@ static auto ProfilerFree = [](void *)
 	profiler_free();
 };
 
+void consoleMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+	DebugConsole::instance()->addMessage(type, context, msg);
+}
+
 static const char *run_program_init = "run_program_init";
 static int run_program(fstream &logFile, int argc, char *argv[])
 {
@@ -1348,6 +1354,10 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QCoreApplication::addLibraryPath(".");
 
 	OBSApp program(argc, argv, profilerNameStore.get());
+	qInstallMessageHandler(consoleMessageOutput);
+	DebugConsole* console = DebugConsole::instance();
+	console->show();
+
 	try {
 		program.AppInit();
 
