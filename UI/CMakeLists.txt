@@ -188,7 +188,8 @@ set(obs_SOURCES
 	remote-text.cpp
 	audio-encoders.cpp
 	qt-wrappers.cpp
-	debug-console.cpp)
+	debug-console.cpp
+	controlpanel.cpp)
 
 set(obs_HEADERS
 	${obs_PLATFORM_HEADERS}
@@ -239,7 +240,8 @@ set(obs_HEADERS
 	remote-text.hpp
 	audio-encoders.hpp
 	qt-wrappers.hpp
-	debug-console.hpp)
+	debug-console.hpp
+	controlpanel.h)
 
 set(obs_UI
 	forms/NameDialog.ui
