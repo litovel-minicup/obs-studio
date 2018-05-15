@@ -46,7 +46,6 @@ class SharedWebsocket: public QObject
 	    void setUrl(const QUrl& url);
 
     signals:
-		void oldSocketClosed();
 	    void connected();
 	    void disconnected();
 	    void error(const QString& msg);

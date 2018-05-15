@@ -1368,12 +1368,18 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	SharedWebsocket* websocket = SharedWebsocket::instance();
 	websocket->setReconnectInterval(std::chrono::milliseconds(1000));
 
+	QObject::connect(websocket, &SharedWebsocket::connected,
+					 &controlPanel, &ControlPanel::setConnected);
+	QObject::connect(websocket, &SharedWebsocket::disconnected,
+					 &controlPanel, &ControlPanel::setDisconnected);
 	QObject::connect(&controlPanel,
 			&ControlPanel::connectRequest,
 			websocket,
 			static_cast<void(SharedWebsocket::*)(const QUrl&)>
                      (&SharedWebsocket::open)
 	);
+
+	websocket->open(controlPanel.serverUrl());
 
 	try {
 		program.AppInit();

@@ -5,9 +5,11 @@
 #include <QtCore/QUrl>
 #include "controlpanel.h"
 #include <QVBoxLayout>
+#include <QtGui/QPainter>
 
 ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     m_serverHostEdit = new QLineEdit(this);
+    m_connected = false;
     m_serverHostEdit->setPlaceholderText("Server host name");
     m_serverHostEdit->setText("ws://localhost:8888/ws/broadcast");
 
@@ -45,9 +47,33 @@ bool ControlPanel::validateServerHostName(const QString &hostName) {
         return false;
     return this->serverUrl().isValid();
 }
+
 QString ControlPanel::serverHostName() const {
     return m_serverHostEdit->text();
 }
+
 QUrl ControlPanel::serverUrl() const {
     return QUrl(m_serverHostEdit->text(), QUrl::StrictMode);
+}
+
+void ControlPanel::paintEvent(QPaintEvent*) {
+    QPainter painter(this);
+    painter.setPen(QColor(Qt::transparent));
+    painter.setBrush((m_connected) ? QColor("#41c1fc") :QColor(Qt::red));
+
+    painter.drawRect(QRect(0, 0, this->rect().width(), 70));
+}
+void ControlPanel::setConnected() {
+    if(m_connected)
+        return;
+
+    m_connected = true;
+    this->update();
+}
+void ControlPanel::setDisconnected() {
+    if(!m_connected)
+        return;
+
+    m_connected = false;
+    this->update();
 }

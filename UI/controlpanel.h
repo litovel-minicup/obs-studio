@@ -11,6 +11,10 @@ class ControlPanel: public QWidget
     private:
         QLineEdit* m_serverHostEdit;
         QPushButton* m_connectButton;
+        bool m_connected;
+
+    protected:
+        void paintEvent(QPaintEvent*) override;
 
     public:
         ControlPanel(QWidget* parent = nullptr);
@@ -20,6 +24,10 @@ class ControlPanel: public QWidget
 
     private slots:
         bool validateServerHostName(const QString& hostName);
+
+    public slots:
+        void setConnected();
+        void setDisconnected();
 
     signals:
         void connectRequest(const QUrl& url);

@@ -8,6 +8,9 @@ SharedWebsocket::SharedWebsocket(QObject * parent): QObject(parent)
     using sslErrorSignal = void(QWebSocket::*)(const QList<QSslError>&);
 
     connect(&m_reconnectTimer, &QTimer::timeout, this, &SharedWebsocket::reconnect);
+    connect(&m_socket, &QWebSocket::connected, this, &SharedWebsocket::connected);
+    connect(&m_socket, &QWebSocket::disconnected,
+            this, &SharedWebsocket::disconnected);
 	connect(&m_socket, &QWebSocket::connected, this, &SharedWebsocket::onConnected);
 	connect(&m_socket, &QWebSocket::disconnected,
             this, &SharedWebsocket::onDisconnected);
@@ -102,7 +105,7 @@ void SharedWebsocket::open(const QUrl &url) {
 }
 
 void SharedWebsocket::reconnect() {
-    qInfo() << "Reconnecting...";
+    qInfo() << "Reconnecting..." << m_url;
     if(m_socket.state() != QAbstractSocket::ConnectedState)
         m_socket.open(m_url);
     else
