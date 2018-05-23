@@ -11,7 +11,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     m_serverHostEdit = new QLineEdit(this);
     m_connected = false;
     m_serverHostEdit->setPlaceholderText("Server host name");
-    m_serverHostEdit->setText("ws://localhost:8888/ws/broadcast");
+    m_serverHostEdit->setText("wss://live.minicup.tatranlitovel.cz/ws/live");
 
     m_connectButton = new QPushButton{"Connect", this};
 

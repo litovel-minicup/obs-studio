@@ -1365,21 +1365,20 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	controlPanel.setGeometry(QRect(50, 0, 400, 200));
 	controlPanel.show();
 
-	SharedWebsocket* websocket = SharedWebsocket::instance();
-	websocket->setReconnectInterval(std::chrono::milliseconds(1000));
+	auto threadedSocket = new ThreadedSharedWebsocket;
+	auto socketWrapper = ThreadedSharedWebsocketWrapper::instance();
+    threadedSocket->bindWrapper(socketWrapper);
 
-	QObject::connect(websocket, &SharedWebsocket::connected,
+	socketWrapper->setReconnectInterval(std::chrono::milliseconds(1000));
+
+	QObject::connect(socketWrapper, &ThreadedSharedWebsocketWrapper::connected,
 					 &controlPanel, &ControlPanel::setConnected);
-	QObject::connect(websocket, &SharedWebsocket::disconnected,
+	QObject::connect(socketWrapper, &ThreadedSharedWebsocketWrapper::disconnected,
 					 &controlPanel, &ControlPanel::setDisconnected);
-	QObject::connect(&controlPanel,
-			&ControlPanel::connectRequest,
-			websocket,
-			static_cast<void(SharedWebsocket::*)(const QUrl&)>
-                     (&SharedWebsocket::open)
-	);
+	QObject::connect(&controlPanel, &ControlPanel::connectRequest,
+					 socketWrapper, &ThreadedSharedWebsocketWrapper::open);
 
-	websocket->open(controlPanel.serverUrl());
+	socketWrapper->open(controlPanel.serverUrl());
 
 	try {
 		program.AppInit();

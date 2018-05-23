@@ -4,40 +4,31 @@
 #include <QTimer>
 #include <chrono>
 #include <QtWebSockets/QWebSocket>
+#include <QThread>
 
-class SharedWebsocket: public QObject
+
+class ReconnectingWebsocket: public QObject
 {
         Q_OBJECT
-		Q_ENUMS(Statuses)
-		Q_PROPERTY(int status READ status NOTIFY statusChanged)
 		Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
-	public:
-		enum Statuses {Open, Closed};
-
     private:
-        static SharedWebsocket* m_instance;
-		Statuses m_status;
         QWebSocket m_socket;
         QTimer m_reconnectTimer;
         QUrl m_url;
 
     public:
-		explicit SharedWebsocket(QObject* parent = nullptr);
+		explicit ReconnectingWebsocket(QObject* parent = nullptr);
 
-		int status() const;
 		QUrl url() const;
-		static SharedWebsocket* instance();
 
     private slots:
         void reconnect();
-		void setStatus(Statuses status);
         void onConnected();
         void onDisconnected();
 		void onSslError(const QList<QSslError>& errors);
 
 	public slots:
-		void stopReconnecting();
 	    void setReconnectInterval(std::chrono::milliseconds time);
 	    void open(std::chrono::milliseconds reconnectTime);
 	    void open();
@@ -50,7 +41,44 @@ class SharedWebsocket: public QObject
 	    void disconnected();
 	    void error(const QString& msg);
 	    void msgReceived(const QString& msg);
-	    void statusChanged(int status);
 	    void urlChanged(const QUrl& url);
 };
 
+class ThreadedSharedWebsocketWrapper: public QObject
+{
+    Q_OBJECT
+
+    private:
+        static ThreadedSharedWebsocketWrapper* m_instance;
+
+    public:
+        explicit ThreadedSharedWebsocketWrapper(QObject* parent = nullptr): QObject(parent) {}
+
+        static ThreadedSharedWebsocketWrapper* instance();
+
+    signals:
+        void sendMsg(const QString& msg);
+        void connected();
+        void disconnected();
+        void error(const QString& msg);
+        void msgReceived(const QString& msg);
+        void open(const QUrl& url);
+        void setReconnectInterval(std::chrono::milliseconds time);
+};
+
+class ThreadedSharedWebsocket: public QThread
+{
+    Q_OBJECT
+
+    private:
+        ReconnectingWebsocket* m_socket;
+
+    public:
+        explicit ThreadedSharedWebsocket(QObject* parent = nullptr);
+
+    protected:
+        void run() override;
+
+    public slots:
+        void bindWrapper(ThreadedSharedWebsocketWrapper* wrapper);
+};
