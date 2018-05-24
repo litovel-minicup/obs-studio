@@ -15,9 +15,15 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
     m_connectButton = new QPushButton{"Connect", this};
 
+    m_matchIdEdit = new QLineEdit{this};
+    m_matchIdEdit->setPlaceholderText("Id of match");
+    m_subscribeButton = new QPushButton{"Subscribe", this};
+
     auto layout = new QVBoxLayout(this);
     layout->addWidget(m_serverHostEdit);
     layout->addWidget(m_connectButton);
+    layout->addWidget(m_matchIdEdit);
+    layout->addWidget(m_subscribeButton);
 
     layout->addSpacerItem(new QSpacerItem(
             10,
@@ -27,6 +33,10 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     );
 
     this->setLayout(layout);
+
+    connect(m_subscribeButton, &QPushButton::clicked, [this]() {
+        emit this->subscribeMatchRequest(m_matchIdEdit->text().toInt());
+    });
 
     connect(m_connectButton, &QPushButton::clicked, [this]() {
         emit this->connectRequest(this->serverUrl());

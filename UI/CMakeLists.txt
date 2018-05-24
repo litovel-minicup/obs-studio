@@ -241,7 +241,7 @@ set(obs_HEADERS
 	audio-encoders.hpp
 	qt-wrappers.hpp
 	debug-console.hpp
-	controlpanel.h)
+	controlpanel.h streammatchinfomanager.cpp streammatchinfomanager.h)
 
 set(obs_UI
 	forms/NameDialog.ui

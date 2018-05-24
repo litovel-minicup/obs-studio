@@ -56,6 +56,7 @@
 #include "debug-console.hpp"
 #include "controlpanel.h"
 #include "sharedwebsocket.h"
+#include "streammatchinfomanager.h"
 
 using namespace std;
 
@@ -1379,6 +1380,10 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 					 socketWrapper, &ThreadedSharedWebsocketWrapper::open);
 
 	socketWrapper->open(controlPanel.serverUrl());
+
+	StreamMatchInfoManager* matchInfoManager = StreamMatchInfoManager::instance();
+	QObject::connect(&controlPanel, &ControlPanel::subscribeMatchRequest,
+                     matchInfoManager, &StreamMatchInfoManager::subscribeMatch);
 
 	try {
 		program.AppInit();

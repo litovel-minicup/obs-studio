@@ -67,5 +67,5 @@ void DebugConsole::addMessage(QtMsgType type, const QMessageLogContext &context,
 		abort();
 	}
 
-	m_text->setText(m_text->text() + text);
+	m_text->setText(m_text->text() + text.replace("\n", "<br/>").replace("\t", "  "));
 }

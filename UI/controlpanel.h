@@ -11,6 +11,9 @@ class ControlPanel: public QWidget
     private:
         QLineEdit* m_serverHostEdit;
         QPushButton* m_connectButton;
+
+        QLineEdit* m_matchIdEdit;
+        QPushButton* m_subscribeButton;
         bool m_connected;
 
     protected:
@@ -32,4 +35,5 @@ class ControlPanel: public QWidget
     signals:
         void connectRequest(const QUrl& url);
         void serverHostNameChanged(const QUrl& url);
+        void subscribeMatchRequest(int id);
 };
