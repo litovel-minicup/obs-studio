@@ -6,10 +6,17 @@
 #define OBS_STUDIO_STREAMMATCHINFOMANAGER_H
 
 
-#include <QtCore/QObject>
-#include "sharedwebsocket.h"
+#include <QObject>
+#include "../match-connection/reconnectingsocket.h"
 
-class StreamMatchInfoManager: public QObject {
+#ifdef MATCH_IM_EXPORT
+#define MATCH_IM_DECL_EXPORT Q_DECL_EXPORT
+#else
+#define MATCH_IM_DECL_EXPORT Q_DECL_IMPORT
+#endif
+
+
+class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
     Q_OBJECT
     Q_PROPERTY(QVariantMap matchData READ matchData NOTIFY matchDataChanged)
 

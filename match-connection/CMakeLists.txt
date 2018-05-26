@@ -1,10 +1,10 @@
-project(obs-connection)
+project(match-connection)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_AUTOMOC TRUE)
 
 
-add_definitions(-DLIBOBS_EXPORTS)
+add_definitions(-DLIBOBS_EXPORTS -DMATCH_CONN_EXPORT)
 
 find_package(Qt5WebSockets REQUIRED)
 if(NOT Qt5WebSockets_FOUND)
@@ -26,22 +26,23 @@ if(NOT Qt5Core_FOUND)
     endif()
 endif()
 
-set(obs_connection_SOURCES
+set(match_connection_SOURCES
     reconnectingsocket.cpp
 )
 
-set(obs_connection_HEADERS
+set(match_connection_HEADERS
+    matchconnectionglobal.h
     reconnectingsocket.h
 )
 
-add_library(obs-connection SHARED
-    ${obs_connection_SOURCES}
-    ${obs_connection_HEADERS}
+add_library(match-connection SHARED
+    ${match_connection_SOURCES}
+    ${match_connection_HEADERS}
 )
 
-target_link_libraries(obs-connection
+target_link_libraries(match-connection
     Qt5::Core
     Qt5::WebSockets
 )
 
-install_obs_core(obs-connection)
+install_obs_core(match-connection)

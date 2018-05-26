@@ -144,7 +144,6 @@ set(obs_SOURCES
 	obs-app.cpp
 	api-interface.cpp
 	debug-console.cpp
-	sharedwebsocket.cpp
 	window-basic-main.cpp
 	window-basic-stats.cpp
 	window-basic-filters.cpp
@@ -197,7 +196,6 @@ set(obs_HEADERS
 	obs-app.hpp
 	platform.hpp
 	debug-console.hpp
-	sharedwebsocket.h
 	window-main.hpp
 	window-basic-main.hpp
 	window-basic-stats.hpp
@@ -241,7 +239,7 @@ set(obs_HEADERS
 	audio-encoders.hpp
 	qt-wrappers.hpp
 	debug-console.hpp
-	controlpanel.h streammatchinfomanager.cpp streammatchinfomanager.h)
+	controlpanel.h)
 
 set(obs_UI
 	forms/NameDialog.ui
@@ -286,7 +284,8 @@ endif()
 
 target_link_libraries(obs
 	libobs
-	obs-connection
+	match-connection
+	match-info-manager
 	Qt5::Widgets
 	Qt5::WebSockets
 	obs-frontend-api
