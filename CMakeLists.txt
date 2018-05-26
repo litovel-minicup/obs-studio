@@ -5,7 +5,7 @@ project(obs-studio)
 option(BUILD_CAPTIONS "Build captions" FALSE)
 
 if(WIN32)
-	set(DepsPath "${CMAKE_SOURCE_DIR}/obs-dependencies/win32")
+	# set(DepsPath "${CMAKE_SOURCE_DIR}/obs-deps/win64/include")
 
 	if (QTDIR OR DEFINED ENV{QTDIR} OR DEFINED ENV{QTDIR32} OR DEFINED ENV{QTDIR64})
 		# Qt path set by user or env var
@@ -123,6 +123,7 @@ if(NOT INSTALLER_RUN)
 	add_subdirectory(libobs-opengl)
 	add_subdirectory(libobs)
 	add_subdirectory(UI)
+	add_subdirectory(obs-connection)
 	add_subdirectory(plugins)
 	if (BUILD_TESTS)
 		add_subdirectory(test)

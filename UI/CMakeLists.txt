@@ -286,6 +286,7 @@ endif()
 
 target_link_libraries(obs
 	libobs
+	obs-connection
 	Qt5::Widgets
 	Qt5::WebSockets
 	obs-frontend-api

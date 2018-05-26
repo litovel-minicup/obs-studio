@@ -57,6 +57,7 @@
 #include "controlpanel.h"
 #include "sharedwebsocket.h"
 #include "streammatchinfomanager.h"
+#include "../obs-connection/reconnectingsocket.h"
 
 using namespace std;
 
@@ -1384,6 +1385,10 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	StreamMatchInfoManager* matchInfoManager = StreamMatchInfoManager::instance();
 	QObject::connect(&controlPanel, &ControlPanel::subscribeMatchRequest,
                      matchInfoManager, &StreamMatchInfoManager::subscribeMatch);
+    //qDebug() << "foo" << 
+	TestFoo f;
+	qDebug() << "foo" << f.boo();
+	qDebug() << "foo" << f.boo();
 
 	try {
 		program.AppInit();
