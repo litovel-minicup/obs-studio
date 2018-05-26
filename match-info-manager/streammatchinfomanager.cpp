@@ -49,7 +49,7 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
     }
 
     if (this->retrievedAllTeamsPlayersData())
-	    emit this->matchDataChanged();
+	    emit this->matchDataChanged(this->matchData());
 }
 
 QVariantMap StreamMatchInfoManager::matchData() const {
