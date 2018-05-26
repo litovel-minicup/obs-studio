@@ -23,23 +23,34 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
     private:
         static StreamMatchInfoManager* m_instance;
         ThreadedSharedWebsocketWrapper* m_socket;
-        QVariantMap m_matchData;
+	    QVariantMap m_nExtMatchData;
+	    QVariantMap m_teamsPlayers;
+	    int m_matchId = -1;
 
         explicit StreamMatchInfoManager(QObject* parent = nullptr);
 
     public:
         static StreamMatchInfoManager* instance();
 
+    private:
+	    bool retrievedAllTeamsPlayersData() const;
+
+    public:
         QVariantMap matchData() const;
 
     private slots:
-        void setMatchData(const QVariantMap& data);
+        void retrieveTeamPlayers();
+        void setLastMatchId(int id);
         void handlleMsg(const QString& msg);
+	    void sendJsonData(const QVariant& data);
+	    void setTeamsPlayersData(const QVariantMap& data);
 
     public slots:
         void subscribeMatch(int id);
+
     signals:
         void matchDataChanged(const QVariantMap& matchData);
+	    void matchChanged();
 };
 
 
