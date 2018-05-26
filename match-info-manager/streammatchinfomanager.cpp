@@ -58,6 +58,11 @@ QVariantMap StreamMatchInfoManager::matchData() const {
 	return data;
 }
 
+Q_INVOKABLE bool StreamMatchInfoManager::hasAllData() const
+{
+	return m_matchId != -1 && this->retrievedAllTeamsPlayersData();
+}
+
 void StreamMatchInfoManager::setLastMatchId(int id) {
 	if (id == m_matchId)
 		return;

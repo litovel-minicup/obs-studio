@@ -37,6 +37,7 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 
     public:
         QVariantMap matchData() const;
+	    Q_INVOKABLE bool hasAllData() const;
 
     private slots:
         void retrieveTeamPlayers();
