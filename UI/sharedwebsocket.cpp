@@ -128,8 +128,20 @@ void ThreadedSharedWebsocket::bindWrapper(ThreadedSharedWebsocketWrapper *wrappe
 
 }
 
+ThreadedSharedWebsocketWrapper::ThreadedSharedWebsocketWrapper(QObject * parent): QObject{parent}
+{
+	QObject::connect(this, &ThreadedSharedWebsocketWrapper::connected, [this]() {
+		m_connected = true;
+	});
+}
+
 ThreadedSharedWebsocketWrapper *ThreadedSharedWebsocketWrapper::instance() {
     if(ThreadedSharedWebsocketWrapper::m_instance == nullptr)
         ThreadedSharedWebsocketWrapper::m_instance = new ThreadedSharedWebsocketWrapper();
     return ThreadedSharedWebsocketWrapper::m_instance;
+}
+
+bool ThreadedSharedWebsocketWrapper::isConnected() const
+{
+	return m_connected;
 }

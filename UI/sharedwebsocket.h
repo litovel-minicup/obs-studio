@@ -50,11 +50,14 @@ class ThreadedSharedWebsocketWrapper: public QObject
 
     private:
         static ThreadedSharedWebsocketWrapper* m_instance;
+	    bool m_connected = false;
 
     public:
-        explicit ThreadedSharedWebsocketWrapper(QObject* parent = nullptr): QObject(parent) {}
+	    explicit ThreadedSharedWebsocketWrapper(QObject* parent = nullptr);
 
         static ThreadedSharedWebsocketWrapper* instance();
+
+	    bool isConnected() const;
 
     signals:
         void sendMsg(const QString& msg);
