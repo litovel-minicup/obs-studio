@@ -58,7 +58,7 @@ QVariantMap StreamMatchInfoManager::matchData() const {
 	return data;
 }
 
-Q_INVOKABLE bool StreamMatchInfoManager::hasAllData() const
+bool StreamMatchInfoManager::hasAllData() const
 {
 	return m_matchId != -1 && this->retrievedAllTeamsPlayersData();
 }
