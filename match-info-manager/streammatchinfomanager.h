@@ -52,6 +52,16 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
     signals:
         void matchDataChanged(const QVariantMap& matchData);
 	    void matchChanged();
+
+	    void showCompactScoreBoardReq();
+	    void showFullScoreBoardReq();
+	    void hideScoreBoardReq();
+
+	    void showPlayersReq();
+	    void hidePlayersReq();
+
+	    void showFinalScoreReq();
+	    void hideFinalScoreReq();
 };
 
 

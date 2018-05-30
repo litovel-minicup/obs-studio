@@ -1364,7 +1364,7 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	console->show();
 
 	ControlPanel controlPanel;
-	controlPanel.setGeometry(QRect(50, 0, 400, 200));
+	controlPanel.setGeometry(QRect(50, 50, 400, 200));
 	controlPanel.show();
 
 	auto threadedSocket = new ThreadedSharedWebsocket;
@@ -1385,6 +1385,28 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	StreamMatchInfoManager* matchInfoManager = StreamMatchInfoManager::instance();
 	QObject::connect(&controlPanel, &ControlPanel::subscribeMatchRequest,
                      matchInfoManager, &StreamMatchInfoManager::subscribeMatch);
+
+	// CONTROLS
+	QObject::connect(&controlPanel, &ControlPanel::showCompactScoreBoardReq, 
+		matchInfoManager, &StreamMatchInfoManager::showCompactScoreBoardReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::showFullScoreBoardReq,
+		matchInfoManager, &StreamMatchInfoManager::showFullScoreBoardReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideScoreBoardReq,
+		matchInfoManager, &StreamMatchInfoManager::hideScoreBoardReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::showPlayersReq,
+		matchInfoManager, &StreamMatchInfoManager::showPlayersReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hidePlayersReq,
+		matchInfoManager, &StreamMatchInfoManager::hidePlayersReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::showFinalScoreReq,
+		matchInfoManager, &StreamMatchInfoManager::showFinalScoreReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideFinalScoreReq,
+		matchInfoManager, &StreamMatchInfoManager::hideFinalScoreReq);
 
 	try {
 		program.AppInit();
