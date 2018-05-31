@@ -34,13 +34,17 @@ void StreamMatchInfoManager::subscribeMatch(int id) {
 }
 
 void StreamMatchInfoManager::handlleMsg(const QString &msg) {
-    qDebug().noquote() << "Received"
+    /*qDebug().noquote() << "Received"
                       << QJsonDocument::fromJson(msg.toUtf8())
-                                      .toJson(QJsonDocument::Indented).data();
+                                      .toJson(QJsonDocument::Indented).data();*/
 
     const QVariantMap data = QJsonDocument::fromJson(msg.toUtf8()).toVariant().toMap();
     if (data["type_content"].toList().contains("match")) {
 	    m_nExtMatchData = data["match"].toMap();
+		// calculate time diff
+	    m_nExtMatchData["time_diff"] = static_cast<double>(QDateTime::currentSecsSinceEpoch()) 
+		    - data["server_time"].toDouble();
+
 	    this->setLastMatchId(m_nExtMatchData["id"].toInt());
     }
 
