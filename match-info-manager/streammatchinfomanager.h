@@ -25,6 +25,7 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
         ThreadedSharedWebsocketWrapper* m_socket;
 	    QVariantMap m_nExtMatchData;
 	    QVariantMap m_teamsPlayers;
+	    QVariantMap m_shooterData;
 	    int m_matchId = -1;
 
         explicit StreamMatchInfoManager(QObject* parent = nullptr);
@@ -62,6 +63,9 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 
 	    void showFinalScoreReq();
 	    void hideFinalScoreReq();
+
+	    void showShooterReq();
+	    void hideShooterReq();
 };
 
 

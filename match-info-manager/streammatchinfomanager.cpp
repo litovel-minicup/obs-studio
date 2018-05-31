@@ -39,6 +39,16 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
                                       .toJson(QJsonDocument::Indented).data();*/
 
     const QVariantMap data = QJsonDocument::fromJson(msg.toUtf8()).toVariant().toMap();
+    if (data["type_content"].toList().contains("event")) {
+	    const QVariantMap eventData = data["event"].toMap();
+	    if (eventData["type"] == "goal") {
+		    m_shooterData["player_name"] = eventData["player_name"];
+		    m_shooterData["player_number"] = eventData["player_number"];
+			// TODO bind
+		    m_shooterData["team_name"] = "Sony team";
+	    }
+	}
+
     if (data["type_content"].toList().contains("match")) {
 	    m_nExtMatchData = data["match"].toMap();
 		// calculate time diff
@@ -59,6 +69,7 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
 QVariantMap StreamMatchInfoManager::matchData() const {
 	QVariantMap data = m_nExtMatchData;
 	data["players"] = m_teamsPlayers;
+	data["last_shooter"] = m_shooterData;
 	return data;
 }
 

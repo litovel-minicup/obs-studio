@@ -1408,6 +1408,12 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QObject::connect(&controlPanel, &ControlPanel::hideFinalScoreReq,
 		matchInfoManager, &StreamMatchInfoManager::hideFinalScoreReq);
 
+	QObject::connect(&controlPanel, &ControlPanel::showShooterReq,
+		matchInfoManager, &StreamMatchInfoManager::showShooterReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideShooterReq,
+		matchInfoManager, &StreamMatchInfoManager::hideShooterReq);
+
 	try {
 		program.AppInit();
 

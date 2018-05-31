@@ -26,6 +26,10 @@ class ControlPanel: public QWidget
 
 		QPushButton* m_showFinalScore;
 		QPushButton* m_hideFinalScore;
+
+		QPushButton* m_showShooter;
+		QPushButton* m_hideShooter;
+
         bool m_connected;
 
     protected:
@@ -58,4 +62,7 @@ class ControlPanel: public QWidget
 
 		void showFinalScoreReq();
 		void hideFinalScoreReq();
+
+		void showShooterReq();
+		void hideShooterReq();
 };

@@ -52,6 +52,16 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hidePlayers);
     mainLayout->addWidget(playersViewControls);
 
+	// SHOOTER control
+    auto shooterControls = new QGroupBox{ "Shooter control" };
+    m_showShooter = new QPushButton{ "Show" };
+    m_hideShooter = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout{ shooterControls };
+    layout->addWidget(m_showShooter);
+    layout->addWidget(m_hideShooter);
+    mainLayout->addWidget(shooterControls);
+
 	// FINAL SCORE control
     auto finalScoreControls = new QGroupBox{"Final score control"};
     m_showFinalScore = new QPushButton{ "Show" };
@@ -83,6 +93,9 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
     connect(m_showFinalScore, &QPushButton::clicked, this, &ControlPanel::showFinalScoreReq);
     connect(m_hideFinalScore, &QPushButton::clicked, this, &ControlPanel::hideFinalScoreReq);
+
+    connect(m_showShooter, &QPushButton::clicked, this, &ControlPanel::showShooterReq);
+    connect(m_hideShooter, &QPushButton::clicked, this, &ControlPanel::hideShooterReq);
 
     connect(m_subscribeButton, &QPushButton::clicked, [this]() {
         emit this->subscribeMatchRequest(m_matchIdEdit->text().toInt());
