@@ -42,10 +42,18 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
     if (data["type_content"].toList().contains("event")) {
 	    const QVariantMap eventData = data["event"].toMap();
 	    if (eventData["type"] == "goal") {
-		    m_shooterData["player_name"] = eventData["player_name"];
+		    if (!eventData["team_id"].isNull()) {
+			    const int teamId = eventData["team_id"].toInt();
+			    for (const QString& key : QStringList{ "away", "home" }) {
+				    if (teamId == m_nExtMatchData[QString("%1_team_id").arg(key)].toInt()) {
+					    m_shooterData["team_name"] = m_nExtMatchData[QString("%1_team_name").arg(key)];
+					    break;
+				    }
+			    }
+		    }
+
+			m_shooterData["player_name"] = eventData["player_name"];
 		    m_shooterData["player_number"] = eventData["player_number"];
-			// TODO bind
-		    m_shooterData["team_name"] = "Sony team";
 	    }
 	}
 
