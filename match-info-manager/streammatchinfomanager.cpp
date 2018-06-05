@@ -37,11 +37,13 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
     /*qDebug().noquote() << "Received"
                       << QJsonDocument::fromJson(msg.toUtf8())
                                       .toJson(QJsonDocument::Indented).data();*/
+	bool goalEvent = false;
 
     const QVariantMap data = QJsonDocument::fromJson(msg.toUtf8()).toVariant().toMap();
     if (data["type_content"].toList().contains("event")) {
 	    const QVariantMap eventData = data["event"].toMap();
 	    if (eventData["type"] == "goal") {
+		    goalEvent = true;
 		    if (!eventData["team_id"].isNull()) {
 			    const int teamId = eventData["team_id"].toInt();
 			    for (const QString& key : QStringList{ "away", "home" }) {
@@ -72,6 +74,9 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
 
     if (this->retrievedAllTeamsPlayersData())
 	    emit this->matchDataChanged(this->matchData());
+
+	if(goalEvent)
+		emit this->showShooterReq();
 }
 
 QVariantMap StreamMatchInfoManager::matchData() const {
