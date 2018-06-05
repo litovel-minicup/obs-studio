@@ -1,7 +1,13 @@
 #include "debug-console.hpp"
 #include <QHBoxLayout>
+#include <QCloseEvent>
 
 DebugConsole* DebugConsole::m_instance = nullptr;
+
+void DebugConsole::closeEvent(QCloseEvent * e)
+{
+	e->ignore();
+}
 
 DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent)
 {
@@ -28,8 +34,11 @@ DebugConsole::DebugConsole(QWidget* parent) : QWidget(parent)
 
 DebugConsole* DebugConsole::instance()
 {
-	if(DebugConsole::m_instance == nullptr)
+	if (DebugConsole::m_instance == nullptr) {
 		DebugConsole::m_instance = new DebugConsole;
+		DebugConsole::m_instance->setWindowFlags(Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint);
+		DebugConsole::m_instance->setWindowTitle("Debug console");
+	}
 	return DebugConsole::m_instance;
 }
 

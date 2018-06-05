@@ -12,6 +12,9 @@ class DebugConsole: public QWidget
 		QLabel* m_text;
 		static DebugConsole* m_instance;
 
+	protected:
+		void closeEvent(QCloseEvent* e) override;
+
 	public:
 		DebugConsole(QWidget* parent = nullptr);
 

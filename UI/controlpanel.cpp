@@ -6,10 +6,14 @@
 #include "controlpanel.h"
 #include <QVBoxLayout>
 #include <QtGui/QPainter>
+#include <QCloseEvent>
 
 ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 	m_connected = false;
 	auto mainLayout = new QVBoxLayout(this);
+
+	this->setWindowTitle("Control panel");
+	this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint);
 
 	// CONNECTION control
 	m_connectionControls = new QGroupBox{"Connection control"};
@@ -137,6 +141,10 @@ void ControlPanel::paintEvent(QPaintEvent*) {
     painter.setPen(QColor(Qt::transparent));
     painter.setBrush((m_connected) ? QColor("#41c1fc") :QColor(Qt::red));
     painter.drawRect(QRect(0, m_connectionControls->y(), this->rect().width(), m_connectionControls->height()));
+}
+void ControlPanel::closeEvent(QCloseEvent *e)
+{
+	e->ignore();
 }
 void ControlPanel::setConnected() {
     if(m_connected)

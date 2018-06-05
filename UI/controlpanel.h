@@ -34,6 +34,7 @@ class ControlPanel: public QWidget
 
     protected:
         void paintEvent(QPaintEvent*) override;
+		void closeEvent(QCloseEvent*) override;
 
     public:
         ControlPanel(QWidget* parent = nullptr);
