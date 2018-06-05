@@ -1360,10 +1360,12 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	OBSApp program(argc, argv, profilerNameStore.get());
 	qInstallMessageHandler(consoleMessageOutput);
 	DebugConsole* console = DebugConsole::instance();
+	console->setWindowTitle("Debug console");
 	console->setGeometry(QRect(50, 400, 800, 500));
 	console->show();
 
 	ControlPanel controlPanel;
+	controlPanel.setWindowTitle("Control panel");
 	controlPanel.setGeometry(QRect(50, 50, 400, 200));
 	controlPanel.show();
 
