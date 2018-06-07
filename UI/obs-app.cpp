@@ -52,6 +52,7 @@
 #include <signal.h>
 #endif
 
+#include <QShortcut>
 #include <iostream>
 #include "debug-console.hpp"
 #include "controlpanel.h"
@@ -1480,6 +1481,22 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 			return 0;
 
 		prof.Stop();
+		QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_J), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setScoreBoardControlsActive);
+		shortcut = new QShortcut(QKeySequence(Qt::Key_K), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setPlayersControlsActive);
+		shortcut = new QShortcut(QKeySequence(Qt::Key_L), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setFinalScoreControlsActive);
+
+		shortcut = new QShortcut(QKeySequence(Qt::Key_I), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::hideControl);
+		shortcut = new QShortcut(QKeySequence(Qt::Key_O), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::showControl);
 
 		return program.exec();
 

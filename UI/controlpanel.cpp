@@ -35,7 +35,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     mainLayout->addWidget(m_connectionControls);
 
 	// SCOREBOARD control
-    auto scoreBoardControls = new QGroupBox("Scoreboard control");
+    scoreBoardControls = new QGroupBox("Scoreboard control");
     m_showCompactScore = new QPushButton("Show Compact");
     m_showFullScore = new QPushButton("Show Full");
     m_hideScore = new QPushButton("Hide");
@@ -47,7 +47,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     mainLayout->addWidget(scoreBoardControls);
 
 	// PLAYERS control
-    auto playersViewControls = new QGroupBox{"Players view control"};
+    playersViewControls = new QGroupBox{"Players view control"};
     m_showPlayers = new QPushButton{ "Show" };
     m_hidePlayers = new QPushButton{ "Hide" };
 
@@ -57,7 +57,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     mainLayout->addWidget(playersViewControls);
 
 	// SHOOTER control
-    auto shooterControls = new QGroupBox{ "Shooter control" };
+    shooterControls = new QGroupBox{ "Shooter control" };
     m_showShooter = new QPushButton{ "Show" };
     m_hideShooter = new QPushButton{ "Hide" };
 
@@ -67,7 +67,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     mainLayout->addWidget(shooterControls);
 
 	// FINAL SCORE control
-    auto finalScoreControls = new QGroupBox{"Final score control"};
+    finalScoreControls = new QGroupBox{"Final score control"};
     m_showFinalScore = new QPushButton{ "Show" };
     m_hideFinalScore = new QPushButton{ "Hide" };
 
@@ -141,6 +141,11 @@ void ControlPanel::paintEvent(QPaintEvent*) {
     painter.setPen(QColor(Qt::transparent));
     painter.setBrush((m_connected) ? QColor("#41c1fc") :QColor(Qt::red));
     painter.drawRect(QRect(0, m_connectionControls->y(), this->rect().width(), m_connectionControls->height()));
+
+    if (m_activeWidget != nullptr) {
+	    painter.setBrush(QColor("orange"));
+	    painter.drawRect(QRect(0, m_activeWidget->y(), this->rect().width(), m_activeWidget->height()));
+	}
 }
 void ControlPanel::closeEvent(QCloseEvent *e)
 {
@@ -159,4 +164,42 @@ void ControlPanel::setDisconnected() {
 
     m_connected = false;
     this->update();
+}
+
+void ControlPanel::setScoreBoardControlsActive()
+{
+	m_activeWidget = scoreBoardControls;
+	this->update();
+}
+
+void ControlPanel::setFinalScoreControlsActive()
+{
+	m_activeWidget = finalScoreControls;
+	this->update();
+}
+
+void ControlPanel::setPlayersControlsActive()
+{
+	m_activeWidget = playersViewControls;
+	this->update();
+}
+
+void ControlPanel::showControl()
+{
+	if (m_activeWidget == scoreBoardControls)
+		emit this->showFullScoreBoardReq();
+	else if (m_activeWidget == playersViewControls)
+		emit this->showPlayersReq();
+	else if (m_activeWidget == finalScoreControls)
+		emit this->showFinalScoreReq();
+}
+
+void ControlPanel::hideControl()
+{
+	if (m_activeWidget == scoreBoardControls)
+		emit this->hideScoreBoardReq();
+	else if (m_activeWidget == playersViewControls)
+		emit this->hidePlayersReq();
+	else if (m_activeWidget == finalScoreControls)
+		emit this->hideFinalScoreReq();
 }

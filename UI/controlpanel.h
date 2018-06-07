@@ -10,6 +10,7 @@ class ControlPanel: public QWidget
     Q_OBJECT
 
     private:
+	    QWidget * m_activeWidget = nullptr;
 	    QGroupBox * m_connectionControls;
         QLineEdit* m_serverHostEdit;
         QPushButton* m_connectButton;
@@ -17,16 +18,20 @@ class ControlPanel: public QWidget
         QLineEdit* m_matchIdEdit;
         QPushButton* m_subscribeButton;
 
+		QGroupBox* scoreBoardControls;
 		QPushButton* m_showCompactScore;
 		QPushButton* m_showFullScore;
 		QPushButton* m_hideScore;
 
+		QGroupBox* playersViewControls;
 		QPushButton* m_showPlayers;
 		QPushButton* m_hidePlayers;
 
+		QGroupBox* finalScoreControls;
 		QPushButton* m_showFinalScore;
 		QPushButton* m_hideFinalScore;
 
+		QGroupBox* shooterControls;
 		QPushButton* m_showShooter;
 		QPushButton* m_hideShooter;
 
@@ -48,6 +53,13 @@ class ControlPanel: public QWidget
     public slots:
         void setConnected();
         void setDisconnected();
+
+		void setScoreBoardControlsActive();
+		void setFinalScoreControlsActive();
+		void setPlayersControlsActive();
+
+		void showControl();
+		void hideControl();
 
     signals:
         void connectRequest(const QUrl& url);
