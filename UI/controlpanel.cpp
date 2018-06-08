@@ -184,6 +184,12 @@ void ControlPanel::setPlayersControlsActive()
 	this->update();
 }
 
+void ControlPanel::show2Control()
+{
+	if (m_activeWidget == scoreBoardControls)
+		emit this->showCompactScoreBoardReq();
+}
+
 void ControlPanel::showControl()
 {
 	if (m_activeWidget == scoreBoardControls)

@@ -1498,6 +1498,10 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::showControl);
 
+		shortcut = new QShortcut(QKeySequence(Qt::Key_P), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::show2Control);
+
 		return program.exec();
 
 	} catch (const char *error) {

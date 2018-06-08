@@ -60,6 +60,7 @@ class ControlPanel: public QWidget
 
 		void showControl();
 		void hideControl();
+		void show2Control();
 
     signals:
         void connectRequest(const QUrl& url);
