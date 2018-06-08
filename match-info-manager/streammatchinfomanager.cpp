@@ -94,6 +94,13 @@ bool StreamMatchInfoManager::hasAllData() const
 void StreamMatchInfoManager::setLastMatchId(int id) {
 	if (id == m_matchId)
 		return;
+	const QVariantMap data{
+		{ "action", "unsubscribe" },
+	{ "match", m_matchId }
+	};
+
+	this->sendJsonData(data);
+
 	m_matchId = id;
 	emit this->matchChanged();
 }
