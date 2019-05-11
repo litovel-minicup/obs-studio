@@ -1,4 +1,5 @@
 #include <QWidget>
+#include <QAction>
 #include <QString>
 
 class Ui_ScriptsTool;
