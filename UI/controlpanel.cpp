@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include <QtGui/QPainter>
 #include <QCloseEvent>
+#include <QDebug>
+
 
 ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 	m_connected = false;
@@ -56,16 +58,6 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hidePlayers);
     mainLayout->addWidget(playersViewControls);
 
-	// SHOOTER control
-    shooterControls = new QGroupBox{ "Shooter control" };
-    m_showShooter = new QPushButton{ "Show" };
-    m_hideShooter = new QPushButton{ "Hide" };
-
-    layout = new QVBoxLayout{ shooterControls };
-    layout->addWidget(m_showShooter);
-    layout->addWidget(m_hideShooter);
-    mainLayout->addWidget(shooterControls);
-
 	// FINAL SCORE control
     finalScoreControls = new QGroupBox{"Final score control"};
     m_showFinalScore = new QPushButton{ "Show" };
@@ -77,6 +69,26 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addStretch(1);
 
     mainLayout->addWidget(finalScoreControls);
+
+    // TEAM TILES control
+    teamTilesControls = new QGroupBox{ "Team tiles control" };
+    m_showTiles = new QPushButton{ "Show" };
+    m_hideTiles = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout(teamTilesControls);
+    layout->addWidget(m_showTiles);
+    layout->addWidget(m_hideTiles);
+    mainLayout->addWidget(teamTilesControls);
+
+    // SHOOTER control
+    shooterControls = new QGroupBox{ "Shooter control" };
+    m_showShooter = new QPushButton{ "Show" };
+    m_hideShooter = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout{ shooterControls };
+    layout->addWidget(m_showShooter);
+    layout->addWidget(m_hideShooter);
+    mainLayout->addWidget(shooterControls);
 
     mainLayout->setSpacing(20);
     mainLayout->addSpacerItem(new QSpacerItem(
@@ -100,6 +112,9 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
     connect(m_showShooter, &QPushButton::clicked, this, &ControlPanel::showShooterReq);
     connect(m_hideShooter, &QPushButton::clicked, this, &ControlPanel::hideShooterReq);
+
+    connect(m_showTiles, &QPushButton::clicked, this, &ControlPanel::showTeamTilesReq);
+    connect(m_hideTiles, &QPushButton::clicked, this, &ControlPanel::hideTeamTilesReq);
 
     connect(m_subscribeButton, &QPushButton::clicked, [this]() {
         emit this->subscribeMatchRequest(m_matchIdEdit->text().toInt());
@@ -184,6 +199,12 @@ void ControlPanel::setPlayersControlsActive()
 	this->update();
 }
 
+void ControlPanel::setTeamTilesControlsActive()
+{
+	m_activeWidget = teamTilesControls;
+	this->update();
+}
+
 void ControlPanel::show2Control()
 {
 	if (m_activeWidget == scoreBoardControls)
@@ -198,6 +219,8 @@ void ControlPanel::showControl()
 		emit this->showPlayersReq();
 	else if (m_activeWidget == finalScoreControls)
 		emit this->showFinalScoreReq();
+	else if (m_activeWidget == teamTilesControls)
+		emit this->showTeamTilesReq();
 }
 
 void ControlPanel::hideControl()
@@ -208,4 +231,6 @@ void ControlPanel::hideControl()
 		emit this->hidePlayersReq();
 	else if (m_activeWidget == finalScoreControls)
 		emit this->hideFinalScoreReq();
+	else if (m_activeWidget == teamTilesControls)
+		emit this->hideTeamTilesReq();
 }

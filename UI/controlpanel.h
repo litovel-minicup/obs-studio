@@ -35,6 +35,10 @@ class ControlPanel: public QWidget
 		QPushButton* m_showShooter;
 		QPushButton* m_hideShooter;
 
+		QGroupBox* teamTilesControls;
+		QPushButton* m_showTiles;
+		QPushButton* m_hideTiles;
+
         bool m_connected;
 
     protected:
@@ -57,6 +61,7 @@ class ControlPanel: public QWidget
 		void setScoreBoardControlsActive();
 		void setFinalScoreControlsActive();
 		void setPlayersControlsActive();
+		void setTeamTilesControlsActive();
 
 		void showControl();
 		void hideControl();
@@ -79,4 +84,7 @@ class ControlPanel: public QWidget
 
 		void showShooterReq();
 		void hideShooterReq();
+
+		void showTeamTilesReq();
+		void hideTeamTilesReq();
 };

@@ -1415,6 +1415,12 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QObject::connect(&controlPanel, &ControlPanel::hideShooterReq,
 		matchInfoManager, &StreamMatchInfoManager::hideShooterReq);
 
+	QObject::connect(&controlPanel, &ControlPanel::showTeamTilesReq,
+		matchInfoManager, &StreamMatchInfoManager::showTeamTilesReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideTeamTilesReq,
+		matchInfoManager, &StreamMatchInfoManager::hideTeamTilesReq);
+
 	try {
 		program.AppInit();
 
@@ -1481,24 +1487,38 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 			return 0;
 
 		prof.Stop();
-		QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_J), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+        // SCOREBOARD 
+		QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_H), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setScoreBoardControlsActive);
-		shortcut = new QShortcut(QKeySequence(Qt::Key_K), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+
+        // PLAYERS LIST
+		shortcut = new QShortcut(QKeySequence(Qt::Key_J), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setPlayersControlsActive);
-		shortcut = new QShortcut(QKeySequence(Qt::Key_L), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+
+        // FINAL SCORE
+		shortcut = new QShortcut(QKeySequence(Qt::Key_K), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setFinalScoreControlsActive);
 
-		shortcut = new QShortcut(QKeySequence(Qt::Key_I), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+        // TEAM TILES
+		shortcut = new QShortcut(QKeySequence(Qt::Key_L), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setTeamTilesControlsActive);
+
+        // HIDE
+		shortcut = new QShortcut(QKeySequence(Qt::Key_D), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::hideControl);
-		shortcut = new QShortcut(QKeySequence(Qt::Key_O), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+
+        // SHOW
+		shortcut = new QShortcut(QKeySequence(Qt::Key_A), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::showControl);
 
-		shortcut = new QShortcut(QKeySequence(Qt::Key_P), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+        // SHOW 2
+		shortcut = new QShortcut(QKeySequence(Qt::Key_S), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::show2Control);
 

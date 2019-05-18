@@ -66,6 +66,9 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 
 	    void showShooterReq();
 	    void hideShooterReq();
+
+	    void showTeamTilesReq();
+	    void hideTeamTilesReq();
 };
 
 
