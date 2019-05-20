@@ -14,6 +14,9 @@ StreamMatchInfoManager::StreamMatchInfoManager(QObject *parent) : QObject(parent
     connect(this, &StreamMatchInfoManager::matchChanged, 
 	    this, &StreamMatchInfoManager::retrieveTeamPlayers);
 
+    connect(this, &StreamMatchInfoManager::matchChanged,
+	    this, &StreamMatchInfoManager::retrieveCategoryTable);
+
     connect(m_socket, &ThreadedSharedWebsocketWrapper::msgReceived,
 	    this, &StreamMatchInfoManager::handlleMsg);
 }
@@ -72,6 +75,10 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
 	    this->setTeamsPlayersData(data);
     }
 
+    if (data["type_content"].toList().contains("category_table")) {
+	    m_categoryTableData = data["category_table"].toList();
+    }
+
     if (this->retrievedAllTeamsPlayersData())
 	    emit this->matchDataChanged(this->matchData());
 
@@ -83,23 +90,30 @@ QVariantMap StreamMatchInfoManager::matchData() const {
 	QVariantMap data = m_nExtMatchData;
 	data["players"] = m_teamsPlayers;
 	data["last_shooter"] = m_shooterData;
+	data["category_table"] = m_categoryTableData;
 	return data;
 }
 
 bool StreamMatchInfoManager::hasAllData() const
 {
-	return m_matchId != -1 && this->retrievedAllTeamsPlayersData();
+	return m_matchId != -1 && this->retrievedAllTeamsPlayersData() && !m_categoryTableData.isEmpty();
 }
 
 void StreamMatchInfoManager::setLastMatchId(int id) {
 	if (id == m_matchId)
 		return;
-	const QVariantMap data{
-		{ "action", "unsubscribe" },
-	{ "match", m_matchId }
-	};
 
-	this->sendJsonData(data);
+	if (m_matchId != -1) {
+		const QVariantMap data{
+			{ "action", "unsubscribe" },
+		{ "match", m_matchId }
+		};
+		m_teamsPlayers.clear();
+		m_shooterData.clear();
+		m_categoryTableData.clear();
+
+		this->sendJsonData(data);
+	}
 
 	m_matchId = id;
 	emit this->matchChanged();
@@ -117,6 +131,18 @@ void StreamMatchInfoManager::retrieveTeamPlayers() {
 
 		this->sendJsonData(dataTeam);
 	}
+}
+
+void StreamMatchInfoManager::retrieveCategoryTable() {
+	if (m_matchId == -1)
+		return;
+
+	const QVariantMap data{
+		{ "action", "fetch_category_table" },
+		{ "category", m_nExtMatchData["category_id"].toInt() }
+	};
+
+	this->sendJsonData(data);
 }
 
 void StreamMatchInfoManager::sendJsonData(const QVariant& data) {

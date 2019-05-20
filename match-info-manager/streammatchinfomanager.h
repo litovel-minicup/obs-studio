@@ -26,6 +26,7 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 	    QVariantMap m_nExtMatchData;
 	    QVariantMap m_teamsPlayers;
 	    QVariantMap m_shooterData;
+	    QVariantList m_categoryTableData;
 	    int m_matchId = -1;
 
         explicit StreamMatchInfoManager(QObject* parent = nullptr);
@@ -41,6 +42,7 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 	    Q_INVOKABLE bool hasAllData() const;
 
     private slots:
+	    void retrieveCategoryTable();
         void retrieveTeamPlayers();
         void setLastMatchId(int id);
         void handlleMsg(const QString& msg);
