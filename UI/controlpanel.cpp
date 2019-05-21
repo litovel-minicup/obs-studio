@@ -38,12 +38,12 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
 	// SCOREBOARD control
     scoreBoardControls = new QGroupBox("Scoreboard control");
-    m_showCompactScore = new QPushButton("Show Compact");
+    //m_showCompactScore = new QPushButton("Show Compact");
     m_showFullScore = new QPushButton("Show Full");
     m_hideScore = new QPushButton("Hide");
 
     layout = new QVBoxLayout{scoreBoardControls};
-    layout->addWidget(m_showCompactScore);
+    //layout->addWidget(m_showCompactScore);
     layout->addWidget(m_showFullScore);
     layout->addWidget(m_hideScore);
     mainLayout->addWidget(scoreBoardControls);
@@ -52,9 +52,11 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     playersViewControls = new QGroupBox{"Players view control"};
     m_showPlayers = new QPushButton{ "Show" };
     m_hidePlayers = new QPushButton{ "Hide" };
+    m_nextPagePlayers = new QPushButton{ "Next page" };
 
     layout = new QVBoxLayout(playersViewControls);
     layout->addWidget(m_showPlayers);
+    layout->addWidget(m_nextPagePlayers);
     layout->addWidget(m_hidePlayers);
     mainLayout->addWidget(playersViewControls);
 
@@ -80,6 +82,18 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hideTiles);
     mainLayout->addWidget(teamTilesControls);
 
+    // CATEGORY TABLE
+    m_categoryTableControls = new QGroupBox{ "Category table control" };
+    m_showCategoryTable = new QPushButton{ "Show" };
+    m_hideCategoryTable = new QPushButton{ "Hide" };
+    m_nextPageCategoryTable = new QPushButton{ "Next page" };
+
+    layout = new QVBoxLayout(m_categoryTableControls);
+    layout->addWidget(m_showCategoryTable);
+    layout->addWidget(m_nextPageCategoryTable);
+    layout->addWidget(m_hideCategoryTable);
+    mainLayout->addWidget(m_categoryTableControls);
+
     // SHOOTER control
     shooterControls = new QGroupBox{ "Shooter control" };
     m_showShooter = new QPushButton{ "Show" };
@@ -100,11 +114,12 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
     this->setLayout(mainLayout);
 
-    connect(m_showCompactScore, &QPushButton::clicked, this, &ControlPanel::showCompactScoreBoardReq);
+    //connect(m_showCompactScore, &QPushButton::clicked, this, &ControlPanel::showCompactScoreBoardReq);
     connect(m_showFullScore, &QPushButton::clicked,  this, &ControlPanel::showFullScoreBoardReq);
     connect(m_hideScore, &QPushButton::clicked, this, &ControlPanel::hideScoreBoardReq);
 
     connect(m_showPlayers, &QPushButton::clicked, this, &ControlPanel::showPlayersReq);
+    connect(m_nextPagePlayers, &QPushButton::clicked, this, &ControlPanel::nextPagePlayersReq);
     connect(m_hidePlayers, &QPushButton::clicked, this, &ControlPanel::hidePlayersReq);
 
     connect(m_showFinalScore, &QPushButton::clicked, this, &ControlPanel::showFinalScoreReq);
@@ -115,6 +130,10 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
     connect(m_showTiles, &QPushButton::clicked, this, &ControlPanel::showTeamTilesReq);
     connect(m_hideTiles, &QPushButton::clicked, this, &ControlPanel::hideTeamTilesReq);
+
+    connect(m_showCategoryTable, &QPushButton::clicked, this, &ControlPanel::showCategoryTableReq);
+    connect(m_hideCategoryTable, &QPushButton::clicked, this, &ControlPanel::hideCategoryTableReq);
+    connect(m_nextPageCategoryTable, &QPushButton::clicked, this, &ControlPanel::nextPageCategoryTableReq);
 
     connect(m_subscribeButton, &QPushButton::clicked, [this]() {
         emit this->subscribeMatchRequest(m_matchIdEdit->text().toInt());
@@ -205,10 +224,20 @@ void ControlPanel::setTeamTilesControlsActive()
 	this->update();
 }
 
+void ControlPanel::setCategoryTableControlsActive()
+{
+	m_activeWidget = m_categoryTableControls;
+	this->update();
+}
+
 void ControlPanel::show2Control()
 {
 	if (m_activeWidget == scoreBoardControls)
 		emit this->showCompactScoreBoardReq();
+	else if (m_activeWidget == m_categoryTableControls)
+		emit this->nextPageCategoryTableReq();
+	else if (m_activeWidget == playersViewControls)
+		emit this->nextPagePlayersReq();
 }
 
 void ControlPanel::showControl()
@@ -221,6 +250,8 @@ void ControlPanel::showControl()
 		emit this->showFinalScoreReq();
 	else if (m_activeWidget == teamTilesControls)
 		emit this->showTeamTilesReq();
+	else if (m_activeWidget == m_categoryTableControls)
+		emit this->showCategoryTableReq();
 }
 
 void ControlPanel::hideControl()
@@ -233,4 +264,6 @@ void ControlPanel::hideControl()
 		emit this->hideFinalScoreReq();
 	else if (m_activeWidget == teamTilesControls)
 		emit this->hideTeamTilesReq();
+	else if (m_activeWidget == m_categoryTableControls)
+		emit this->hideCategoryTableReq();
 }

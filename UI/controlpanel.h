@@ -26,6 +26,7 @@ class ControlPanel: public QWidget
 		QGroupBox* playersViewControls;
 		QPushButton* m_showPlayers;
 		QPushButton* m_hidePlayers;
+		QPushButton* m_nextPagePlayers;
 
 		QGroupBox* finalScoreControls;
 		QPushButton* m_showFinalScore;
@@ -38,6 +39,11 @@ class ControlPanel: public QWidget
 		QGroupBox* teamTilesControls;
 		QPushButton* m_showTiles;
 		QPushButton* m_hideTiles;
+
+		QGroupBox* m_categoryTableControls;
+		QPushButton* m_showCategoryTable;
+		QPushButton* m_nextPageCategoryTable;
+		QPushButton* m_hideCategoryTable;
 
         bool m_connected;
 
@@ -62,6 +68,7 @@ class ControlPanel: public QWidget
 		void setFinalScoreControlsActive();
 		void setPlayersControlsActive();
 		void setTeamTilesControlsActive();
+		void setCategoryTableControlsActive();
 
 		void showControl();
 		void hideControl();
@@ -78,6 +85,7 @@ class ControlPanel: public QWidget
 
 		void showPlayersReq();
 		void hidePlayersReq();
+		void nextPagePlayersReq();
 
 		void showFinalScoreReq();
 		void hideFinalScoreReq();
@@ -87,4 +95,8 @@ class ControlPanel: public QWidget
 
 		void showTeamTilesReq();
 		void hideTeamTilesReq();
+
+		void showCategoryTableReq();
+		void hideCategoryTableReq();
+		void nextPageCategoryTableReq();
 };

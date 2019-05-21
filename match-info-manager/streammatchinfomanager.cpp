@@ -37,9 +37,9 @@ void StreamMatchInfoManager::subscribeMatch(int id) {
 }
 
 void StreamMatchInfoManager::handlleMsg(const QString &msg) {
-    /*qDebug().noquote() << "Received"
+    qDebug().noquote() << "Received"
                       << QJsonDocument::fromJson(msg.toUtf8())
-                                      .toJson(QJsonDocument::Indented).data();*/
+                                      .toJson(QJsonDocument::Indented).data();
 	bool goalEvent = false;
 
     const QVariantMap data = QJsonDocument::fromJson(msg.toUtf8()).toVariant().toMap();
@@ -147,6 +147,9 @@ void StreamMatchInfoManager::retrieveCategoryTable() {
 
 void StreamMatchInfoManager::sendJsonData(const QVariant& data) {
 	QJsonDocument jsonDoc = QJsonDocument::fromVariant(data);
+	qDebug().noquote() << "Send"
+		<< jsonDoc.toJson(QJsonDocument::Indented).data();
+
 	m_socket->sendMsg(QString::fromUtf8(jsonDoc.toJson()));
 }
 

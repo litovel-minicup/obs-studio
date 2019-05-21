@@ -1403,6 +1403,9 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QObject::connect(&controlPanel, &ControlPanel::hidePlayersReq,
 		matchInfoManager, &StreamMatchInfoManager::hidePlayersReq);
 
+	QObject::connect(&controlPanel, &ControlPanel::nextPagePlayersReq,
+		matchInfoManager, &StreamMatchInfoManager::nextPagePlayersReq);
+
 	QObject::connect(&controlPanel, &ControlPanel::showFinalScoreReq,
 		matchInfoManager, &StreamMatchInfoManager::showFinalScoreReq);
 
@@ -1420,6 +1423,15 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 
 	QObject::connect(&controlPanel, &ControlPanel::hideTeamTilesReq,
 		matchInfoManager, &StreamMatchInfoManager::hideTeamTilesReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::showCategoryTableReq,
+		matchInfoManager, &StreamMatchInfoManager::showCategoryTableReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideCategoryTableReq,
+		matchInfoManager, &StreamMatchInfoManager::hideCategoryTableReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::nextPageCategoryTableReq,
+		matchInfoManager, &StreamMatchInfoManager::nextPageCategoryTableReq);
 
 	try {
 		program.AppInit();
@@ -1487,10 +1499,16 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 			return 0;
 
 		prof.Stop();
+
         // SCOREBOARD 
 		QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_H), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setScoreBoardControlsActive);
+
+		// CATEGORY TABLE
+		shortcut = new QShortcut(QKeySequence(Qt::Key_B), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setCategoryTableControlsActive);
 
         // PLAYERS LIST
 		shortcut = new QShortcut(QKeySequence(Qt::Key_J), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);

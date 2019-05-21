@@ -62,6 +62,7 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 
 	    void showPlayersReq();
 	    void hidePlayersReq();
+	    void nextPagePlayersReq();
 
 	    void showFinalScoreReq();
 	    void hideFinalScoreReq();
@@ -71,6 +72,10 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 
 	    void showTeamTilesReq();
 	    void hideTeamTilesReq();
+
+	    void showCategoryTableReq();
+	    void hideCategoryTableReq();
+	    void nextPageCategoryTableReq();
 };
 
 
