@@ -52,6 +52,10 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
 			    for (const QString& key : QStringList{ "away", "home" }) {
 				    if (teamId == m_nExtMatchData[QString("%1_team_id").arg(key)].toInt()) {
 					    m_shooterData["team_name"] = m_nExtMatchData[QString("%1_team_name").arg(key)];
+					    m_shooterData["team_color_primary"] = m_nExtMatchData[QString("%1_team_color_primary").arg(key)];
+					    m_shooterData["team_color_secondary"] = m_nExtMatchData[QString("%1_team_color_secondary").arg(key)];
+					    m_shooterData["team_color_text"] = m_nExtMatchData[QString("%1_team_color_text").arg(key)];
+					    m_shooterData["team_slug"] = m_nExtMatchData[QString("%1_team_slug").arg(key)];
 					    break;
 				    }
 			    }
