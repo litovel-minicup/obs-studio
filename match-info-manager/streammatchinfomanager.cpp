@@ -151,8 +151,8 @@ void StreamMatchInfoManager::retrieveCategoryTable() {
 
 void StreamMatchInfoManager::sendJsonData(const QVariant& data) {
 	QJsonDocument jsonDoc = QJsonDocument::fromVariant(data);
-	qDebug().noquote() << "Send"
-		<< jsonDoc.toJson(QJsonDocument::Indented).data();
+	/*qDebug().noquote() << "Send"
+		<< jsonDoc.toJson(QJsonDocument::Indented).data();*/
 
 	m_socket->sendMsg(QString::fromUtf8(jsonDoc.toJson()));
 }
