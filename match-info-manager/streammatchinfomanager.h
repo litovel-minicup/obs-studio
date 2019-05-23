@@ -73,6 +73,9 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 	    void showTeamTilesReq();
 	    void hideTeamTilesReq();
 
+	    void showSocialMediasReq();
+	    void hideSocialMediasReq();
+
 	    void showCategoryTableReq();
 	    void hideCategoryTableReq();
 	    void nextPageCategoryTableReq();

@@ -94,6 +94,16 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hideCategoryTable);
     mainLayout->addWidget(m_categoryTableControls);
 
+    // SOCIAL MEDIAS
+    m_socialMediasControls = new QGroupBox{ "Social medias control" };
+    m_showSocialMedias = new QPushButton{ "Show" };
+    m_hideSocialMedias = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout{ m_socialMediasControls };
+    layout->addWidget(m_showSocialMedias);
+    layout->addWidget(m_hideSocialMedias);
+    mainLayout->addWidget(m_socialMediasControls);
+
     // SHOOTER control
     shooterControls = new QGroupBox{ "Shooter control" };
     m_showShooter = new QPushButton{ "Show" };
@@ -134,6 +144,9 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     connect(m_showCategoryTable, &QPushButton::clicked, this, &ControlPanel::showCategoryTableReq);
     connect(m_hideCategoryTable, &QPushButton::clicked, this, &ControlPanel::hideCategoryTableReq);
     connect(m_nextPageCategoryTable, &QPushButton::clicked, this, &ControlPanel::nextPageCategoryTableReq);
+
+    connect(m_showSocialMedias, &QPushButton::clicked, this, &ControlPanel::showSocialMediasReq);
+    connect(m_hideSocialMedias, &QPushButton::clicked, this, &ControlPanel::hideSocialMediasReq);
 
     connect(m_subscribeButton, &QPushButton::clicked, [this]() {
         emit this->subscribeMatchRequest(m_matchIdEdit->text().toInt());
@@ -230,6 +243,12 @@ void ControlPanel::setCategoryTableControlsActive()
 	this->update();
 }
 
+void ControlPanel::setSocialMediasControlsActive()
+{
+	m_activeWidget = m_socialMediasControls;
+	this->update();
+}
+
 void ControlPanel::show2Control()
 {
 	if (m_activeWidget == scoreBoardControls)
@@ -252,6 +271,8 @@ void ControlPanel::showControl()
 		emit this->showTeamTilesReq();
 	else if (m_activeWidget == m_categoryTableControls)
 		emit this->showCategoryTableReq();
+	else if (m_activeWidget == m_socialMediasControls)
+		emit this->showSocialMediasReq();
 }
 
 void ControlPanel::hideControl()
@@ -266,4 +287,6 @@ void ControlPanel::hideControl()
 		emit this->hideTeamTilesReq();
 	else if (m_activeWidget == m_categoryTableControls)
 		emit this->hideCategoryTableReq();
+	else if (m_activeWidget == m_socialMediasControls)
+		emit this->hideSocialMediasReq();
 }

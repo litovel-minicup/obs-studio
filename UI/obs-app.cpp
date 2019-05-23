@@ -1424,6 +1424,12 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QObject::connect(&controlPanel, &ControlPanel::hideTeamTilesReq,
 		matchInfoManager, &StreamMatchInfoManager::hideTeamTilesReq);
 
+	QObject::connect(&controlPanel, &ControlPanel::showSocialMediasReq,
+		matchInfoManager, &StreamMatchInfoManager::showSocialMediasReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideSocialMediasReq,
+		matchInfoManager, &StreamMatchInfoManager::hideSocialMediasReq);
+
 	QObject::connect(&controlPanel, &ControlPanel::showCategoryTableReq,
 		matchInfoManager, &StreamMatchInfoManager::showCategoryTableReq);
 
@@ -1509,6 +1515,11 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 		shortcut = new QShortcut(QKeySequence(Qt::Key_B), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setCategoryTableControlsActive);
+
+        // SOCIAL MEDIAS
+		shortcut = new QShortcut(QKeySequence(Qt::Key_N), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setSocialMediasControlsActive);
 
         // PLAYERS LIST
 		shortcut = new QShortcut(QKeySequence(Qt::Key_J), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);

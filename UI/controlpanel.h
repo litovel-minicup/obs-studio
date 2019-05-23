@@ -45,6 +45,10 @@ class ControlPanel: public QWidget
 		QPushButton* m_nextPageCategoryTable;
 		QPushButton* m_hideCategoryTable;
 
+		QGroupBox* m_socialMediasControls;
+		QPushButton* m_showSocialMedias;
+		QPushButton* m_hideSocialMedias;
+
         bool m_connected;
 
     protected:
@@ -69,6 +73,7 @@ class ControlPanel: public QWidget
 		void setPlayersControlsActive();
 		void setTeamTilesControlsActive();
 		void setCategoryTableControlsActive();
+		void setSocialMediasControlsActive();
 
 		void showControl();
 		void hideControl();
@@ -99,4 +104,7 @@ class ControlPanel: public QWidget
 		void showCategoryTableReq();
 		void hideCategoryTableReq();
 		void nextPageCategoryTableReq();
+
+		void showSocialMediasReq();
+		void hideSocialMediasReq();
 };
