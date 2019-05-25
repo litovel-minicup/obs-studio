@@ -12,7 +12,9 @@
 
 ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 	m_connected = false;
-	auto mainLayout = new QVBoxLayout(this);
+	auto leftLayout = new QVBoxLayout;
+	auto rightLayout = new QVBoxLayout;
+	auto mainLayout = new QHBoxLayout(this);
 
 	this->setWindowTitle("Control panel");
 	this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint);
@@ -34,7 +36,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_connectButton);
     layout->addWidget(m_matchIdEdit);
     layout->addWidget(m_subscribeButton);
-    mainLayout->addWidget(m_connectionControls);
+    leftLayout->addWidget(m_connectionControls);
 
 	// SCOREBOARD control
     scoreBoardControls = new QGroupBox("Scoreboard control");
@@ -46,31 +48,17 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     //layout->addWidget(m_showCompactScore);
     layout->addWidget(m_showFullScore);
     layout->addWidget(m_hideScore);
-    mainLayout->addWidget(scoreBoardControls);
+    leftLayout->addWidget(scoreBoardControls);
 
-	// PLAYERS control
-    playersViewControls = new QGroupBox{"Players view control"};
-    m_showPlayers = new QPushButton{ "Show" };
-    m_hidePlayers = new QPushButton{ "Hide" };
-    m_nextPagePlayers = new QPushButton{ "Next page" };
-
-    layout = new QVBoxLayout(playersViewControls);
-    layout->addWidget(m_showPlayers);
-    layout->addWidget(m_nextPagePlayers);
-    layout->addWidget(m_hidePlayers);
-    mainLayout->addWidget(playersViewControls);
-
-	// FINAL SCORE control
-    finalScoreControls = new QGroupBox{"Final score control"};
+    // FINAL SCORE control
+    finalScoreControls = new QGroupBox{ "Final score control" };
     m_showFinalScore = new QPushButton{ "Show" };
     m_hideFinalScore = new QPushButton{ "Hide" };
 
     layout = new QVBoxLayout(finalScoreControls);
     layout->addWidget(m_showFinalScore);
     layout->addWidget(m_hideFinalScore);
-    layout->addStretch(1);
-
-    mainLayout->addWidget(finalScoreControls);
+    leftLayout->addWidget(finalScoreControls);
 
     // TEAM TILES control
     teamTilesControls = new QGroupBox{ "Team tiles control" };
@@ -80,7 +68,17 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout = new QVBoxLayout(teamTilesControls);
     layout->addWidget(m_showTiles);
     layout->addWidget(m_hideTiles);
-    mainLayout->addWidget(teamTilesControls);
+    leftLayout->addWidget(teamTilesControls);
+
+    // PLAYERS control
+    playersViewControls = new QGroupBox{ "Players view control" };
+    m_showPlayers = new QPushButton{ "Show" };
+    m_hidePlayers = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout(playersViewControls);
+    layout->addWidget(m_showPlayers);
+    layout->addWidget(m_hidePlayers);
+    leftLayout->addWidget(playersViewControls);
 
     // CATEGORY TABLE
     m_categoryTableControls = new QGroupBox{ "Category table control" };
@@ -92,7 +90,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_showCategoryTable);
     layout->addWidget(m_nextPageCategoryTable);
     layout->addWidget(m_hideCategoryTable);
-    mainLayout->addWidget(m_categoryTableControls);
+    leftLayout->addWidget(m_categoryTableControls);
 
     // SOCIAL MEDIAS
     m_socialMediasControls = new QGroupBox{ "Social medias control" };
@@ -102,7 +100,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout = new QVBoxLayout{ m_socialMediasControls };
     layout->addWidget(m_showSocialMedias);
     layout->addWidget(m_hideSocialMedias);
-    mainLayout->addWidget(m_socialMediasControls);
+    rightLayout->addWidget(m_socialMediasControls);
 
     // SHOOTER control
     shooterControls = new QGroupBox{ "Shooter control" };
@@ -112,16 +110,27 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout = new QVBoxLayout{ shooterControls };
     layout->addWidget(m_showShooter);
     layout->addWidget(m_hideShooter);
-    mainLayout->addWidget(shooterControls);
+    rightLayout->addWidget(shooterControls);
 
-    mainLayout->setSpacing(20);
-    mainLayout->addSpacerItem(new QSpacerItem(
+    leftLayout->setSpacing(20);
+    leftLayout->addSpacerItem(new QSpacerItem(
 	    10,
 	    10,
 	    QSizePolicy::Expanding,
 	    QSizePolicy::Expanding)
     );
 
+    rightLayout->setSpacing(20);
+    rightLayout->addSpacerItem(new QSpacerItem(
+	    10,
+	    10,
+	    QSizePolicy::Expanding,
+	    QSizePolicy::Expanding)
+    );
+
+    mainLayout->setSpacing(20);
+    mainLayout->addLayout(leftLayout);
+    mainLayout->addLayout(rightLayout);
     this->setLayout(mainLayout);
 
     //connect(m_showCompactScore, &QPushButton::clicked, this, &ControlPanel::showCompactScoreBoardReq);
@@ -129,7 +138,6 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     connect(m_hideScore, &QPushButton::clicked, this, &ControlPanel::hideScoreBoardReq);
 
     connect(m_showPlayers, &QPushButton::clicked, this, &ControlPanel::showPlayersReq);
-    connect(m_nextPagePlayers, &QPushButton::clicked, this, &ControlPanel::nextPagePlayersReq);
     connect(m_hidePlayers, &QPushButton::clicked, this, &ControlPanel::hidePlayersReq);
 
     connect(m_showFinalScore, &QPushButton::clicked, this, &ControlPanel::showFinalScoreReq);
@@ -187,11 +195,11 @@ void ControlPanel::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setPen(QColor(Qt::transparent));
     painter.setBrush((m_connected) ? QColor("#41c1fc") :QColor(Qt::red));
-    painter.drawRect(QRect(0, m_connectionControls->y(), this->rect().width(), m_connectionControls->height()));
+    painter.drawRect(m_connectionControls->geometry().adjusted(-10, -10, 10, 10));
 
     if (m_activeWidget != nullptr) {
 	    painter.setBrush(QColor("orange"));
-	    painter.drawRect(QRect(0, m_activeWidget->y(), this->rect().width(), m_activeWidget->height()));
+	    painter.drawRect(m_activeWidget->geometry().adjusted(-10, -10, 10, 10));
 	}
 }
 void ControlPanel::closeEvent(QCloseEvent *e)
