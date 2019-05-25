@@ -1388,6 +1388,12 @@ static int run_program(fstream &logFile, int argc, char *argv[])
                      matchInfoManager, &StreamMatchInfoManager::subscribeMatch);
 
 	// CONTROLS
+	QObject::connect(&controlPanel, &ControlPanel::showNameDisplayReq,
+		matchInfoManager, &StreamMatchInfoManager::showNameDisplayReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideNameDisplayReq,
+		matchInfoManager, &StreamMatchInfoManager::hideNameDisplayReq);
+
 	QObject::connect(&controlPanel, &ControlPanel::showCompactScoreBoardReq, 
 		matchInfoManager, &StreamMatchInfoManager::showCompactScoreBoardReq);
 

@@ -102,6 +102,16 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hideSocialMedias);
     rightLayout->addWidget(m_socialMediasControls);
 
+    // NAME DISPLAY 
+    m_nameDisplayControls = new QGroupBox{ "Name Display controls" };
+    m_showNameDisplay = new QPushButton{ "Show" };
+    m_hideNameDisplay = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout{ m_nameDisplayControls };
+    layout->addWidget(m_showNameDisplay);
+    layout->addWidget(m_hideNameDisplay);
+    rightLayout->addWidget(m_nameDisplayControls);
+
     // SHOOTER control
     shooterControls = new QGroupBox{ "Shooter control" };
     m_showShooter = new QPushButton{ "Show" };
@@ -155,6 +165,9 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
 
     connect(m_showSocialMedias, &QPushButton::clicked, this, &ControlPanel::showSocialMediasReq);
     connect(m_hideSocialMedias, &QPushButton::clicked, this, &ControlPanel::hideSocialMediasReq);
+
+    connect(m_showNameDisplay, &QPushButton::clicked, this, &ControlPanel::showNameDisplayReq);
+    connect(m_hideNameDisplay, &QPushButton::clicked, this, &ControlPanel::hideNameDisplayReq);
 
     connect(m_subscribeButton, &QPushButton::clicked, [this]() {
         emit this->subscribeMatchRequest(m_matchIdEdit->text().toInt());

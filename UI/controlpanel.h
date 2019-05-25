@@ -49,6 +49,10 @@ class ControlPanel: public QWidget
 		QPushButton* m_showSocialMedias;
 		QPushButton* m_hideSocialMedias;
 
+		QGroupBox* m_nameDisplayControls;
+		QPushButton* m_showNameDisplay;
+		QPushButton* m_hideNameDisplay;
+
         bool m_connected;
 
     protected:
@@ -97,6 +101,9 @@ class ControlPanel: public QWidget
 
 		void showShooterReq();
 		void hideShooterReq();
+
+		void showNameDisplayReq();
+		void hideNameDisplayReq();
 
 		void showTeamTilesReq();
 		void hideTeamTilesReq();
