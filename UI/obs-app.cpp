@@ -1365,7 +1365,7 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	console->show();*/
 
 	ControlPanel controlPanel;
-	controlPanel.setGeometry(QRect(50, 50, 400, 200));
+	controlPanel.setGeometry(QRect(50, 50, 600, 200));
 	controlPanel.show();
 
 	auto threadedSocket = new ThreadedSharedWebsocket;
