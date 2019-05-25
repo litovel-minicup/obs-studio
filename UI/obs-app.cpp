@@ -1359,10 +1359,10 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QCoreApplication::addLibraryPath(".");
 
 	OBSApp program(argc, argv, profilerNameStore.get());
-	qInstallMessageHandler(consoleMessageOutput);
+	/*qInstallMessageHandler(consoleMessageOutput);
 	DebugConsole* console = DebugConsole::instance();
 	console->setGeometry(QRect(50, 400, 800, 500));
-	console->show();
+	console->show();*/
 
 	ControlPanel controlPanel;
 	controlPanel.setGeometry(QRect(50, 50, 400, 200));
