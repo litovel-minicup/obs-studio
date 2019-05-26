@@ -178,7 +178,7 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     });
     connect(m_serverHostEdit, &QLineEdit::textChanged, [this](const QString& text) {
         if(this->validateServerHostName(text)) {
-            m_serverHostEdit->setStyleSheet("color: #000000");
+            m_serverHostEdit->setStyleSheet("color: #FFFFFF");
             emit this->serverHostNameChanged(this->serverUrl());
         }
 
