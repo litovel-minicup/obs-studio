@@ -41,11 +41,16 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
                       << QJsonDocument::fromJson(msg.toUtf8())
                                       .toJson(QJsonDocument::Indented).data();*/
 	bool goalEvent = false;
+	bool startEvent = false, endEvent = false;
 
     const QVariantMap data = QJsonDocument::fromJson(msg.toUtf8()).toVariant().toMap();
     if (data["type_content"].toList().contains("event")) {
 	    const QVariantMap eventData = data["event"].toMap();
-	    if (eventData["type"] == "goal") {
+	    if (eventData["type"] == "start")
+		    startEvent = true;
+	    else if (eventData["type"] == "end")
+		    endEvent = true;
+	    else if (eventData["type"] == "goal") {
 		    goalEvent = true;
 		    if (!eventData["team_id"].isNull()) {
 			    const int teamId = eventData["team_id"].toInt();
@@ -86,8 +91,12 @@ void StreamMatchInfoManager::handlleMsg(const QString &msg) {
     if (this->retrievedAllTeamsPlayersData())
 	    emit this->matchDataChanged(this->matchData());
 
-	if(goalEvent)
-		emit this->showShooterReq();
+    if (goalEvent)
+	    emit this->showShooterReq();
+    else if (startEvent)
+	    emit this->matchStarted();
+    else if (endEvent)
+	    emit this->matchEnded();
 }
 
 QVariantMap StreamMatchInfoManager::matchData() const {

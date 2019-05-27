@@ -82,6 +82,9 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 	    void showCategoryTableReq();
 	    void hideCategoryTableReq();
 	    void nextPageCategoryTableReq();
+
+	    void matchStarted();
+	    void matchEnded();
 };
 
 
