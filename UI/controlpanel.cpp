@@ -112,6 +112,18 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hideNameDisplay);
     rightLayout->addWidget(m_nameDisplayControls);
 
+    // TEAMS PLAYCEMENT
+    m_teamPlacementControls = new QGroupBox{ "Team placement controls" };
+    m_showTeamPlacement = new QPushButton{ "Show" };
+    m_hideTeamPlacement = new QPushButton{ "Hide" };
+    m_nextPageTeamPlacement = new QPushButton{ "Next page" };
+
+    layout = new QVBoxLayout{ m_teamPlacementControls };
+    layout->addWidget(m_showTeamPlacement);
+    layout->addWidget(m_nextPageTeamPlacement);
+    layout->addWidget(m_hideTeamPlacement);
+    rightLayout->addWidget(m_teamPlacementControls);
+
     // SHOOTER control
     shooterControls = new QGroupBox{ "Shooter control" };
     m_showShooter = new QPushButton{ "Show" };
@@ -162,6 +174,10 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     connect(m_showCategoryTable, &QPushButton::clicked, this, &ControlPanel::showCategoryTableReq);
     connect(m_hideCategoryTable, &QPushButton::clicked, this, &ControlPanel::hideCategoryTableReq);
     connect(m_nextPageCategoryTable, &QPushButton::clicked, this, &ControlPanel::nextPageCategoryTableReq);
+
+    connect(m_showTeamPlacement, &QPushButton::clicked, this, &ControlPanel::showTeamPlacementReq);
+    connect(m_hideTeamPlacement, &QPushButton::clicked, this, &ControlPanel::hideTeamPlacementReq);
+    connect(m_nextPageTeamPlacement, &QPushButton::clicked, this, &ControlPanel::nextPageTeamPlacementReq);
 
     connect(m_showSocialMedias, &QPushButton::clicked, this, &ControlPanel::showSocialMediasReq);
     connect(m_hideSocialMedias, &QPushButton::clicked, this, &ControlPanel::hideSocialMediasReq);

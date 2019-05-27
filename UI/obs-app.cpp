@@ -1445,6 +1445,15 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	QObject::connect(&controlPanel, &ControlPanel::nextPageCategoryTableReq,
 		matchInfoManager, &StreamMatchInfoManager::nextPageCategoryTableReq);
 
+	QObject::connect(&controlPanel, &ControlPanel::showTeamPlacementReq,
+		matchInfoManager, &StreamMatchInfoManager::showTeamPlacementReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideTeamPlacementReq,
+		matchInfoManager, &StreamMatchInfoManager::hideTeamPlacementReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::nextPageTeamPlacementReq,
+		matchInfoManager, &StreamMatchInfoManager::nextPageTeamPlacementReq);
+
 	try {
 		program.AppInit();
 

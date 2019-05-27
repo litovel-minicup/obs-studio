@@ -53,6 +53,11 @@ class ControlPanel: public QWidget
 		QPushButton* m_showNameDisplay;
 		QPushButton* m_hideNameDisplay;
 
+		QGroupBox* m_teamPlacementControls;
+		QPushButton* m_showTeamPlacement;
+		QPushButton* m_hideTeamPlacement;
+		QPushButton* m_nextPageTeamPlacement;
+
         bool m_connected;
 
     protected:
@@ -111,6 +116,10 @@ class ControlPanel: public QWidget
 		void showCategoryTableReq();
 		void hideCategoryTableReq();
 		void nextPageCategoryTableReq();
+
+		void showTeamPlacementReq();
+		void hideTeamPlacementReq();
+		void nextPageTeamPlacementReq();
 
 		void showSocialMediasReq();
 		void hideSocialMediasReq();

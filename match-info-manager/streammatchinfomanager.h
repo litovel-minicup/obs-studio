@@ -83,6 +83,10 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 	    void hideCategoryTableReq();
 	    void nextPageCategoryTableReq();
 
+	    void showTeamPlacementReq();
+	    void hideTeamPlacementReq();
+	    void nextPageTeamPlacementReq();
+
 	    void matchStarted();
 	    void matchEnded();
 };
