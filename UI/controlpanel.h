@@ -79,10 +79,12 @@ class ControlPanel: public QWidget
 
 		void setScoreBoardControlsActive();
 		void setFinalScoreControlsActive();
-		void setPlayersControlsActive();
 		void setTeamTilesControlsActive();
+		void setPlayersControlsActive();
 		void setCategoryTableControlsActive();
 		void setSocialMediasControlsActive();
+		void setNameDisplayControlsActive();
+		void setTeamPlacementControlsActive();
 
 		void showControl();
 		void hideControl();

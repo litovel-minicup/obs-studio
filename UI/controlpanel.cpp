@@ -286,6 +286,18 @@ void ControlPanel::setSocialMediasControlsActive()
 	this->update();
 }
 
+void ControlPanel::setNameDisplayControlsActive()
+{
+	m_activeWidget = m_nameDisplayControls;
+	this->update();
+}
+
+void ControlPanel::setTeamPlacementControlsActive()
+{
+	m_activeWidget = m_teamPlacementControls;
+	this->update();
+}
+
 void ControlPanel::show2Control()
 {
 	if (m_activeWidget == scoreBoardControls)
@@ -294,6 +306,8 @@ void ControlPanel::show2Control()
 		emit this->nextPageCategoryTableReq();
 	else if (m_activeWidget == playersViewControls)
 		emit this->nextPagePlayersReq();
+	else if (m_activeWidget == m_teamPlacementControls)
+		emit this->nextPageTeamPlacementReq();
 }
 
 void ControlPanel::showControl()
@@ -310,6 +324,10 @@ void ControlPanel::showControl()
 		emit this->showCategoryTableReq();
 	else if (m_activeWidget == m_socialMediasControls)
 		emit this->showSocialMediasReq();
+	else if (m_activeWidget == m_nameDisplayControls)
+		emit this->showNameDisplayReq();
+	else if (m_activeWidget == m_teamPlacementControls)
+		emit this->showTeamPlacementReq();
 }
 
 void ControlPanel::hideControl()
@@ -326,4 +344,8 @@ void ControlPanel::hideControl()
 		emit this->hideCategoryTableReq();
 	else if (m_activeWidget == m_socialMediasControls)
 		emit this->hideSocialMediasReq();
+	else if (m_activeWidget == m_nameDisplayControls)
+		emit this->hideNameDisplayReq();
+	else if (m_activeWidget == m_teamPlacementControls)
+		emit this->hideTeamPlacementReq();
 }
