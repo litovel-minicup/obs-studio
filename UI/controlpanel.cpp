@@ -124,6 +124,17 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     layout->addWidget(m_hideTeamPlacement);
     rightLayout->addWidget(m_teamPlacementControls);
 
+    // SUBS
+    m_subsControls = new QGroupBox{ "Subs controls" };
+    m_showSubs = new QPushButton{ "Show" };
+    m_hideSubs = new QPushButton{ "Hide" };
+
+    layout = new QVBoxLayout{ m_subsControls };
+    layout->addWidget(m_showSubs);
+    layout->addWidget(m_hideSubs);
+
+    rightLayout->addWidget(m_subsControls);
+
     // SHOOTER control
     shooterControls = new QGroupBox{ "Shooter control" };
     m_showShooter = new QPushButton{ "Show" };
@@ -158,6 +169,9 @@ ControlPanel::ControlPanel(QWidget* parent): QWidget(parent) {
     //connect(m_showCompactScore, &QPushButton::clicked, this, &ControlPanel::showCompactScoreBoardReq);
     connect(m_showFullScore, &QPushButton::clicked,  this, &ControlPanel::showFullScoreBoardReq);
     connect(m_hideScore, &QPushButton::clicked, this, &ControlPanel::hideScoreBoardReq);
+
+    connect(m_showSubs, &QPushButton::clicked, this, &ControlPanel::showSubsReq);
+    connect(m_hideSubs, &QPushButton::clicked, this, &ControlPanel::hideSubsReq);
 
     connect(m_showPlayers, &QPushButton::clicked, this, &ControlPanel::showPlayersReq);
     connect(m_hidePlayers, &QPushButton::clicked, this, &ControlPanel::hidePlayersReq);
@@ -298,6 +312,12 @@ void ControlPanel::setTeamPlacementControlsActive()
 	this->update();
 }
 
+void ControlPanel::setSubsControlsActive()
+{
+	m_activeWidget = m_subsControls;
+	this->update();
+}
+
 void ControlPanel::show2Control()
 {
 	if (m_activeWidget == scoreBoardControls)
@@ -328,6 +348,8 @@ void ControlPanel::showControl()
 		emit this->showNameDisplayReq();
 	else if (m_activeWidget == m_teamPlacementControls)
 		emit this->showTeamPlacementReq();
+	else if (m_activeWidget == m_subsControls)
+		emit this->showSubsReq();
 }
 
 void ControlPanel::hideControl()
@@ -348,4 +370,6 @@ void ControlPanel::hideControl()
 		emit this->hideNameDisplayReq();
 	else if (m_activeWidget == m_teamPlacementControls)
 		emit this->hideTeamPlacementReq();
+	else if (m_activeWidget == m_subsControls)
+		emit this->hideSubsReq();
 }

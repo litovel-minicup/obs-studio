@@ -1388,6 +1388,12 @@ static int run_program(fstream &logFile, int argc, char *argv[])
                      matchInfoManager, &StreamMatchInfoManager::subscribeMatch);
 
 	// CONTROLS
+	QObject::connect(&controlPanel, &ControlPanel::showSubsReq,
+		matchInfoManager, &StreamMatchInfoManager::showSubsReq);
+
+	QObject::connect(&controlPanel, &ControlPanel::hideSubsReq,
+		matchInfoManager, &StreamMatchInfoManager::hideSubsReq);
+
 	QObject::connect(&controlPanel, &ControlPanel::showNameDisplayReq,
 		matchInfoManager, &StreamMatchInfoManager::showNameDisplayReq);
 
@@ -1525,6 +1531,10 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 		QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_1), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
 		shortcut->setAutoRepeat(false);
 		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setScoreBoardControlsActive);
+
+		shortcut = new QShortcut(QKeySequence(Qt::Key_0), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+		shortcut->setAutoRepeat(false);
+		QObject::connect(shortcut, &QShortcut::activated, &controlPanel, &ControlPanel::setSubsControlsActive);
 
 		// CATEGORY TABLE
 		shortcut = new QShortcut(QKeySequence(Qt::Key_5), program.GetMainWindow(), nullptr, nullptr, Qt::WidgetWithChildrenShortcut);

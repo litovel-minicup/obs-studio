@@ -89,6 +89,9 @@ class MATCH_IM_DECL_EXPORT StreamMatchInfoManager: public QObject {
 
 	    void matchStarted();
 	    void matchEnded();
+
+	    void showSubsReq();
+	    void hideSubsReq();
 };
 
 

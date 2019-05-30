@@ -58,6 +58,10 @@ class ControlPanel: public QWidget
 		QPushButton* m_hideTeamPlacement;
 		QPushButton* m_nextPageTeamPlacement;
 
+		QGroupBox* m_subsControls;
+		QPushButton* m_showSubs;
+		QPushButton* m_hideSubs;
+
         bool m_connected;
 
     protected:
@@ -85,6 +89,7 @@ class ControlPanel: public QWidget
 		void setSocialMediasControlsActive();
 		void setNameDisplayControlsActive();
 		void setTeamPlacementControlsActive();
+		void setSubsControlsActive();
 
 		void showControl();
 		void hideControl();
@@ -125,4 +130,7 @@ class ControlPanel: public QWidget
 
 		void showSocialMediasReq();
 		void hideSocialMediasReq();
+
+		void showSubsReq();
+		void hideSubsReq();
 };
